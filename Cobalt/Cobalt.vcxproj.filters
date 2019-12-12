@@ -18,13 +18,13 @@
     <ClInclude Include="src\Cobalt\Core.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="src\Cobalt\Application.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="src\Cobalt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\Cobalt\EntryPoint.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\Cobalt\Application.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

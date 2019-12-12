@@ -11,8 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\Cobalt.h" />
     <ClInclude Include="src\Cobalt\Application.h" />
+    <ClInclude Include="src\Cobalt.h" />
     <ClInclude Include="src\Cobalt\Core.h" />
     <ClInclude Include="src\Cobalt\EntryPoint.h" />
   </ItemGroup>
