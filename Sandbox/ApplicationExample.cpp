@@ -1,14 +1,16 @@
+#include <Cobalt.h>
+
+class Sandbox : public Cobalt::Application {
+public:
+	Sandbox() {
+
+	}
+	~Sandbox() {
+
+	}
+};
 
 
-
-namespace Cobalt {
-
-	__declspec(dllimport) void Print();
-}
-
-void main() {
-
-
-	Cobalt::Print();
-
+Cobalt::Application* Cobalt::CreateApplication() {
+	return new Sandbox();
 }
