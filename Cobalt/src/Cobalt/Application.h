@@ -11,5 +11,6 @@ namespace Cobalt {
 		virtual ~Application();
 		void Run();
 	};
+	Application* CreateApplication();
 }
 
