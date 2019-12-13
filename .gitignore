@@ -43,3 +43,4 @@ bin-int/*
 
 *.vcxproj
 *.sln
+*.filters
