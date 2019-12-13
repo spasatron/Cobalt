@@ -1,0 +1,3 @@
+[submodule "Cobalt/vendor/spdlog"]
+	path = Cobalt/vendor/spdlog
+	url = https://github.com/gabime/spdlog

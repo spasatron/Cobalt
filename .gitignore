@@ -38,3 +38,8 @@ bin-int/*
 
 #.user
 *.user
+
+#All vs code project setups
+
+*.vcxproj
+*.sln
