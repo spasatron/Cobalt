@@ -1,9 +1,6 @@
 #pragma once
 
 #include "Cobalt/Core.h"
-#include <string>
-#include <sstream>
-#include <functional>
 
 namespace Cobalt {
 
