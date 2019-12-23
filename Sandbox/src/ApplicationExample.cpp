@@ -11,9 +11,6 @@ public:
 
 };
 
-//
 Cobalt::Application* Cobalt::CreateApplication(){
-	Sandbox *sand = new Sandbox();
-	sand->Run();
-	return sand;
+	return new Sandbox();
 }

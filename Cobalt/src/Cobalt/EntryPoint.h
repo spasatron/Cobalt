@@ -11,7 +11,7 @@ int main(int argc, char** argv) {
 	COBALT_CORE_WARN("Client has started up");
 	int a = 120;
 	COBALT_CORE_ERROR("Critical Message test {0}", a);
-	COBALT_INFO("Client trace test");
+	COBALT_TRACE("Client trace test");
 
 	auto app = Cobalt::CreateApplication();
 	app->Run();

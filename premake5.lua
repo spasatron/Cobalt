@@ -26,7 +26,8 @@ project "Cobalt"
 
     includedirs
     {
-        "Cobalt/vendor/spdlog/include"
+        "%{prj.name}/vendor/spdlog/include",
+        "%{prj.name}/src"
     }
 
     filter "system:windows"
