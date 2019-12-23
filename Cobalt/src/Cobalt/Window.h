@@ -4,6 +4,9 @@
 
 #include "Cobalt/Core.h"
 #include "Cobalt/Events/Event.h"
+#include "Cobalt/Events/ApplicationEvent.h"
+#include "Cobalt/Events/KeyEvent.h"
+#include "Cobalt/Events/MouseEvent.h"
 
 //The whole point of this is to make the window platform indep. 
 namespace Cobalt {
