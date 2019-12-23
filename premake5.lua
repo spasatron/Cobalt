@@ -61,7 +61,12 @@ project "Cobalt"
 
 
         filter "configurations:Debug"
-            defines "CB_DEBUG"
+            defines
+            { 
+                "CB_DEBUG",
+                "CB_ENABLE_ASSERT"
+            }
+
             symbols "On"
 
         filter "configurations:Release"

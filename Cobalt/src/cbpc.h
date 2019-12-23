@@ -15,6 +15,8 @@
 #include <unordered_map>
 #include <unordered_set>
 
+#include "Cobalt/Log.h"
+
 
 #ifdef CB_PLATFORM_WINDOWS
 	#include <Windows.h>
