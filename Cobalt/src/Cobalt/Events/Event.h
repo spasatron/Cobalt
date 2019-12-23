@@ -42,8 +42,8 @@ namespace Cobalt {
 	//Baseclass for events
 	class COBALT_API Event
 	{
+		friend class EventDispatcher;
 	public:
-		bool Handled = false;
 		//Virtual functions a re supposed to be implemented elsewhere
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
@@ -52,8 +52,7 @@ namespace Cobalt {
 		/*
 		Filters out categories to check if your event is in the desired category.
 		*/
-		inline bool IsInCategory(EventCategory category)
-		{
+		inline bool IsInCategory(EventCategory category){
 			return (GetCategoryFlags() & category);
 		}
 	protected:
@@ -65,18 +64,14 @@ namespace Cobalt {
 		template<typename T>
 		using EventFn = std::function<bool(T&)>;
 	public:
-		EventDispatcher(Event& event)
-			: m_Event(event)
-		{
-		}
+		EventDispatcher(Event& event) : m_Event(event) {}
 
-		// F will be deduced by the compiler
 		template<typename T>
 		bool Dispatch(EventFn<T> func)
 		{
 			if (m_Event.GetEventType() == T::GetStaticType())
 			{
-				m_Event.Handled = func(*(T*))&m_Event;
+				m_Event.m_Handled = func(*(T*)&m_Event);
 				return true;
 			}
 			return false;
@@ -89,7 +84,5 @@ namespace Cobalt {
 	{
 		return os << e.ToString();
 	}
-
-
 
 }

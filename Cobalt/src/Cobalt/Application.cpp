@@ -1,6 +1,6 @@
 #include "cbpc.h"
 #include "Application.h"
-#include "Events/ApplicationEvent.h"
+
 #include <GLFW/glfw3.h>
 
 
@@ -19,8 +19,15 @@ namespace Cobalt {
 
 	}
 	void Application::OnEvent(Event& e) {
-		COBALT_CORE_INFO("{0}", e);
+
+		EventDispatcher eventDispatcher(e);
+		eventDispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FUNCTION(Application::OnWindowClose));
+
+
+		COBALT_CORE_TRACE("{0}", e);
 	}
+	
+
 	void Application::Run() {
 		
 		while (m_running) {
@@ -29,5 +36,10 @@ namespace Cobalt {
 			m_window->OnUpdate();
 		}
 
+	}
+
+	bool Application::OnWindowClose(WindowCloseEvent& e) {
+		m_running = false;
+		return true;
 	}
 }
