@@ -9,6 +9,12 @@ workspace "Cobalt"
     }
 
 outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
+-- Include Directories releative to root folder
+IncludeDir = {}
+IncludeDir["GLFW"] = "Cobalt/vendor/GLFW/include"
+
+include "Cobalt/vendor/GLFW"
+
 
 project "Cobalt"
     location "Cobalt"
@@ -30,9 +36,13 @@ project "Cobalt"
     includedirs
     {
         "%{prj.name}/vendor/spdlog/include",
-        "%{prj.name}/src"
+        "%{prj.name}/src",
+        "%{IncludeDir.GLFW}"
     }
-
+    links{
+        "GLFW",
+        "opengl32.lib"
+    }
     filter "system:windows"
         cppdialect "C++17"
         staticruntime "On"

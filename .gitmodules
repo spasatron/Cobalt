@@ -1,3 +1,6 @@
 [submodule "Cobalt/vendor/spdlog"]
 	path = Cobalt/vendor/spdlog
 	url = https://github.com/gabime/spdlog
+[submodule "Cobalt/vendor/GLFW"]
+	path = Cobalt/vendor/GLFW
+	url = https://github.com/spasatron/glfw
