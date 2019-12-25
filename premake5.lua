@@ -12,8 +12,10 @@ outputdir = "%{cfg.buildcfg}-%{cfg.system}-%{cfg.architecture}"
 -- Include Directories releative to root folder
 IncludeDir = {}
 IncludeDir["GLFW"] = "Cobalt/vendor/GLFW/include"
+IncludeDir["GLAD"] = "Cobalt/vendor/GLAD/include"
 
 include "Cobalt/vendor/GLFW"
+include "Cobalt/vendor/GLAD"
 
 
 project "Cobalt"
@@ -37,10 +39,12 @@ project "Cobalt"
     {
         "%{prj.name}/vendor/spdlog/include",
         "%{prj.name}/src",
-        "%{IncludeDir.GLFW}"
+        "%{IncludeDir.GLFW}",
+        "%{IncludeDir.GLAD}"
     }
     links{
         "GLFW",
+        "GLAD",
         "opengl32.lib"
     }
     filter "system:windows"
