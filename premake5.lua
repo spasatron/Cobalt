@@ -53,7 +53,6 @@ project "Cobalt"
             "CB_PLATFORM_WINDOWS",
             "CB_BUILD_DLL"
         }
-
         postbuildcommands
         {
             "{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox"
@@ -66,15 +65,17 @@ project "Cobalt"
                 "CB_DEBUG",
                 "CB_ENABLE_ASSERT"
             }
-
+            buildoptions "/MDd"
             symbols "On"
 
         filter "configurations:Release"
             defines "CB_RELEASE"
+            buildoptions "/MD"
             optimize "On"
 
         filter "configurations:Dist"
             defines "CB_DIST"
+            buildoptions "/MD"
             optimize "On"
 
 project "Sandbox"
@@ -115,11 +116,14 @@ project "Sandbox"
         filter "configurations:Debug"
             defines "CB_DEBUG"
             symbols "On"
+            buildoptions "/MDd"
 
         filter "configurations:Release"
             defines "CB_RELEASE"
             optimize "On"
+            buildoptions "/MD"
 
         filter "configurations:Dist"
             defines "CB_DIST"
             optimize "On"
+            buildoptions "/MD"
