@@ -2,7 +2,7 @@
 #include "cbpc.h"
 #include "WindowsWindow.h"
 
-
+#include <glad/glad.h>
 
 namespace Cobalt {
 
@@ -45,6 +45,10 @@ namespace Cobalt {
 
 		m_window = glfwCreateWindow((int)prop.width, (int)prop.height, prop.title.c_str(), nullptr, nullptr);
 		glfwMakeContextCurrent(m_window);
+		//This initiallizes glad
+		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
+		COBALT_CORE_ASSERT(status, "FAILED TO INITIALIZE GLAD");
+
 		glfwSetWindowUserPointer(m_window, &m_data);
 		SetVSync(true);
 		

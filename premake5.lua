@@ -55,7 +55,8 @@ project "Cobalt"
         defines
         {
             "CB_PLATFORM_WINDOWS",
-            "CB_BUILD_DLL"
+            "CB_BUILD_DLL",
+            "GLFW_INCLUDE_NONE"
         }
         postbuildcommands
         {
