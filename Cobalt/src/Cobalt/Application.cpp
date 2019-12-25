@@ -1,6 +1,5 @@
 #include "cbpc.h"
 #include "Application.h"
-
 #include <GLFW/glfw3.h>
 
 
@@ -25,14 +24,27 @@ namespace Cobalt {
 
 
 		COBALT_CORE_TRACE("{0}", e);
+
+		for (auto it = m_layerStack.end(); it != m_layerStack.begin();) {
+			(*(--it))->OnEvent(e);
+			if (e.m_Handled) {
+				break;
+			}
+		}
+
+
 	}
 	
 
 	void Application::Run() {
 		
 		while (m_running) {
-			glClearColor(.7, .5, .02, 1);
+			glClearColor(0, .2, .8, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			for (Layer* layer : m_layerStack)
+				layer->OnUpdate();
+
 			m_window->OnUpdate();
 		}
 
@@ -42,4 +54,13 @@ namespace Cobalt {
 		m_running = false;
 		return true;
 	}
+
+	void Application::PushLayer(Layer* layer) {
+		m_layerStack.PushLayer(layer);
+	}
+
+	void Application::PushOverlay(Layer* overlay) {
+		m_layerStack.PushOverlay(overlay);
+	}
+
 }

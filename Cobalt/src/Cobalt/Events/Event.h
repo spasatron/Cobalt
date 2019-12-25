@@ -44,6 +44,8 @@ namespace Cobalt {
 	{
 		friend class EventDispatcher;
 	public:
+
+		bool m_Handled = false;
 		//Virtual functions a re supposed to be implemented elsewhere
 		virtual EventType GetEventType() const = 0;
 		virtual const char* GetName() const = 0;
@@ -56,7 +58,7 @@ namespace Cobalt {
 			return (GetCategoryFlags() & category);
 		}
 	protected:
-		bool m_Handled = false;
+		
 	};
 
 	class EventDispatcher
