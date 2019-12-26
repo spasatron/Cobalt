@@ -4,3 +4,6 @@
 [submodule "Cobalt/vendor/GLFW"]
 	path = Cobalt/vendor/GLFW
 	url = https://github.com/spasatron/glfw
+[submodule "Cobalt/vendor/imgui"]
+	path = Cobalt/vendor/imgui
+	url = https://github.com/spasatron/imgui
