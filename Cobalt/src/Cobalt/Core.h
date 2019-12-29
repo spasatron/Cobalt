@@ -22,3 +22,5 @@
 
 
 #define BIT(x) (1<<x)
+
+#define COBALT_BIND_EVENT_FUNCTION(x) std::bind(&x, this, std::placeholders::_1)

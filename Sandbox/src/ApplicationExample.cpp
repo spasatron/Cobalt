@@ -12,8 +12,10 @@ public:
 	}
 
 	void OnEvent(Cobalt::Event& e) override {
+		//The OnEvent function is where you want to implement the event dispatcher
 
-		COBALT_TRACE("Event Detected{0}", e);
+
+		//COBALT_TRACE("Event Detected{0}", e);
 
 	}
 };
@@ -22,6 +24,7 @@ class Sandbox : public Cobalt::Application {
 public: 
 	Sandbox() {
 		PushLayer(new SLayer());
+		PushOverlay(new Cobalt::ImGuiLayer());
 	}
 	~Sandbox() {
 		

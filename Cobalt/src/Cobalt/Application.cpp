@@ -9,11 +9,17 @@ namespace Cobalt {
 
 //jsut sets the eventFunction to be whatever is passed in
 
-#define BIND_EVENT_FUNCTION(x) std::bind(&x, this, std::placeholders::_1)
+
+
+	Application* Application::s_instance = nullptr;
 
 	Application::Application() {
+
+		COBALT_CORE_ASSERT(!s_instance, "One Application Already Exists");
+
+		s_instance = this;
 		m_window = std::unique_ptr<Window>(Window::Create());
-		m_window->SetEventCallback(BIND_EVENT_FUNCTION(Application::OnEvent));
+		m_window->SetEventCallback(COBALT_BIND_EVENT_FUNCTION(Application::OnEvent));
 	}
 	Application::~Application() {
 
@@ -21,10 +27,10 @@ namespace Cobalt {
 	void Application::OnEvent(Event& e) {
 
 		EventDispatcher eventDispatcher(e);
-		eventDispatcher.Dispatch<WindowCloseEvent>(BIND_EVENT_FUNCTION(Application::OnWindowClose));
+		eventDispatcher.Dispatch<WindowCloseEvent>(COBALT_BIND_EVENT_FUNCTION(Application::OnWindowClose));
 
 
-		COBALT_CORE_TRACE("{0}", e);
+		//COBALT_CORE_TRACE("{0}", e);
 
 		for (auto it = m_layerStack.end(); it != m_layerStack.begin();) {
 			(*(--it))->OnEvent(e);
@@ -58,10 +64,12 @@ namespace Cobalt {
 
 	void Application::PushLayer(Layer* layer) {
 		m_layerStack.PushLayer(layer);
+		layer->OnAttach();
 	}
 
 	void Application::PushOverlay(Layer* overlay) {
 		m_layerStack.PushOverlay(overlay);
+		overlay->OnAttach(); 
 	}
 
 }

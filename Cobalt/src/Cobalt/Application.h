@@ -16,6 +16,8 @@ namespace Cobalt {
 		void PushLayer(Layer* layer);
 		void PushOverlay(Layer* Overlay);
 
+		inline static Application& GetApplication() { return *s_instance; }
+		inline Window& GetWindow() { return *m_window;  }
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
@@ -23,6 +25,8 @@ namespace Cobalt {
 		bool m_running = true;
 
 		LayerStack m_layerStack;
+
+		static Application* s_instance;
 
 	};
 	Application* CreateApplication();
