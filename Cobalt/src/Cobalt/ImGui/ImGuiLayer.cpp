@@ -109,7 +109,7 @@ namespace Cobalt {
 		ImGuiIO& io = ImGui::GetIO();
 
 		io.MouseDown[e.GetMouseButton()] = true;
-		COBALT_INFO("Clicked {}", e.GetMouseButton());
+		//COBALT_INFO("Clicked {}", e.GetMouseButton());
 
 		return false;
 	}
@@ -117,7 +117,7 @@ namespace Cobalt {
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.MousePos = ImVec2(e.GetX(), e.GetY());
-		COBALT_CORE_INFO("{0}, {1}", e.GetX(), e.GetY());
+		//COBALT_CORE_INFO("{0}, {1}", e.GetX(), e.GetY());
 
 		return false;
 	}
@@ -127,7 +127,7 @@ namespace Cobalt {
 
 		io.MouseDown[e.GetMouseButton()] = false;
 
-		COBALT_INFO("Released {}", e.GetMouseButton());
+		//COBALT_INFO("Released {}", e.GetMouseButton());
 
 		return false;
 	}

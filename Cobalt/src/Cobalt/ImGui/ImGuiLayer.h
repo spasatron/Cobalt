@@ -26,6 +26,7 @@ namespace Cobalt{
 		bool ImGuiOnMouseMoved(MouseMovedEvent& e);
 		bool ImGuiOnMouseReleased(MouseButtonReleasedEvent& e);
 		bool ImGuiOnMouseScroll(MouseScrolledEvent& e);
+
 		//To Do Key Events
 
 	};

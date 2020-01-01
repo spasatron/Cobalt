@@ -8,6 +8,14 @@
 #include "Cobalt/Layer.h"
 #include "Cobalt/ImGui/ImGuiLayer.h"
 
+
+#include "Cobalt/KeyCodes.h"
+#include "Cobalt/MouseButtonCodes.h"
+#include "Cobalt/Input.h"
+
+
+
+
 //------------Entry-Point-------
 #include "Cobalt/EntryPoint.h"
 //------------------------------
