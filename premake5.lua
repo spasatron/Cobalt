@@ -14,6 +14,7 @@ IncludeDir = {}
 IncludeDir["GLFW"] = "Cobalt/vendor/GLFW/include"
 IncludeDir["GLAD"] = "Cobalt/vendor/GLAD/include"
 IncludeDir["ImGui"] = "Cobalt/vendor/imgui"
+IncludeDir["glm"] = "Cobalt/vendor/glm"
 
 include "Cobalt/vendor/GLFW"
 include "Cobalt/vendor/GLAD"
@@ -34,7 +35,9 @@ project "Cobalt"
     files
     {
         "%{prj.name}/src/**.h",
-        "%{prj.name}/src/**.cpp"
+        "%{prj.name}/src/**.cpp",
+        "%{prj.name}/vendor/glm/glm/**.hpp",
+        "%{prj.name}/vendor/glm/glm/**.inl"
     }
 
     includedirs
@@ -43,7 +46,8 @@ project "Cobalt"
         "%{prj.name}/src",
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
-        "%{IncludeDir.ImGui}"
+        "%{IncludeDir.ImGui}",
+        "%{IncludeDir.glm}"
     }
     links{
         "GLFW",
@@ -106,7 +110,8 @@ project "Sandbox"
     includedirs
     {
         "Cobalt/vendor/spdlog/include",
-        "Cobalt/src"
+        "Cobalt/src",
+        "%{IncludeDir.glm}"
     }
 
     filter "system:windows"

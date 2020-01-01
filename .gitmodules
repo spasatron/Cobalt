@@ -7,3 +7,6 @@
 [submodule "Cobalt/vendor/imgui"]
 	path = Cobalt/vendor/imgui
 	url = https://github.com/spasatron/imgui
+[submodule "Cobalt/vendor/glm"]
+	path = Cobalt/vendor/glm
+	url = https://github.com/g-truc/glm
