@@ -23,6 +23,8 @@ namespace Cobalt {
 		void SetVSync(bool enabled) override;
 		bool IsVSync() const override;
 
+		inline virtual void* GetNativeWindow() const override { return m_window; }
+
 
 	private:
 

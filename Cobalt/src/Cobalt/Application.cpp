@@ -2,7 +2,7 @@
 #include "Application.h"
 
 #include <glad/glad.h>
-
+#include "Cobalt/Input.h"
 
 namespace Cobalt {
 
@@ -52,6 +52,8 @@ namespace Cobalt {
 			for (Layer* layer : m_layerStack)
 				layer->OnUpdate();
 
+			//Input is now working
+			//COBALT_CORE_INFO("{0}", Input::IsKeyPressed(65));
 			m_window->OnUpdate();
 		}
 
