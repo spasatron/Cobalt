@@ -1,11 +1,11 @@
 #include <Cobalt.h>
 
-
+#include "imgui/imgui.h"
 
 class SLayer : public Cobalt::Layer {
 public:
 
-	SLayer() : Layer("My Example Layer") {}
+	SLayer() : Layer("New Layer") {}
 
 	void OnUpdate() override {
 		//COBALT_INFO("Update");
@@ -21,6 +21,7 @@ public:
 		//COBALT_TRACE("Event Detected{0}", e);
 
 	}
+
 };
 
 class Sandbox : public Cobalt::Application {

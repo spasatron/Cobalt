@@ -111,9 +111,12 @@ project "Sandbox"
     {
         "Cobalt/vendor/spdlog/include",
         "Cobalt/src",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "Cobalt/vendor"
     }
-
+    links{
+        "ImGui"
+    }
     filter "system:windows"
         
         systemversion "latest"
