@@ -9,7 +9,7 @@
 namespace Cobalt {
 
 	LayerStack::LayerStack() {
-		m_layerInsert = m_layers.begin();
+		m_layerInsert = 0;
 	}
 
 	LayerStack::~LayerStack() {
@@ -19,7 +19,8 @@ namespace Cobalt {
 
 	void LayerStack::PushLayer(Layer* layer) {
 
-		m_layerInsert = m_layers.emplace(m_layerInsert, layer);
+		m_layers.emplace(m_layers.begin() + m_layerInsert, layer);
+		m_layerInsert++;
 		
 	}
 	void LayerStack::PushOverlay(Layer* overlay) {

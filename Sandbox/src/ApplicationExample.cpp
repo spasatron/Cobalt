@@ -27,7 +27,6 @@ class Sandbox : public Cobalt::Application {
 public: 
 	Sandbox() {
 		PushLayer(new SLayer());
-		PushOverlay(new Cobalt::ImGuiLayer());
 	}
 	~Sandbox() {
 		

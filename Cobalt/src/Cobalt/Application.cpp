@@ -4,6 +4,8 @@
 #include <glad/glad.h>
 #include "Cobalt/Input.h"
 
+#include "Cobalt/ImGui/ImGuiLayer.h"
+
 namespace Cobalt {
 
 
@@ -20,6 +22,9 @@ namespace Cobalt {
 		s_instance = this;
 		m_window = std::unique_ptr<Window>(Window::Create());
 		m_window->SetEventCallback(COBALT_BIND_EVENT_FUNCTION(Application::OnEvent));
+
+		m_ImGuiLayer = new ImGuiLayer();
+		PushOverlay(m_ImGuiLayer);
 	}
 	Application::~Application() {
 
@@ -52,6 +57,10 @@ namespace Cobalt {
 			for (Layer* layer : m_layerStack)
 				layer->OnUpdate();
 
+			m_ImGuiLayer->Begin();
+			for (Layer* layer : m_layerStack)
+				layer->OnImGuiRender();
+			m_ImGuiLayer->End();
 			//Input is now working
 			//COBALT_CORE_INFO("{0}", Input::IsKeyPressed(65));
 			m_window->OnUpdate();

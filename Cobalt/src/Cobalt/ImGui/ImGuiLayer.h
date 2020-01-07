@@ -12,20 +12,15 @@ namespace Cobalt{
 
 		ImGuiLayer();
 		~ImGuiLayer();
-		void OnAttach();
-		void OnDetach();
-		void OnUpdate();
-		void OnEvent(Event& e);
-
+		virtual void OnAttach() override;
+		virtual void OnDetach() override;
+		virtual void OnImGuiRender() override;
+		void Begin();
+		void End();
 		
 
 	private:
 		float m_time = 0.0f;
-
-		bool ImGuiOnMousePress(MouseButtonPressedEvent& e);
-		bool ImGuiOnMouseMoved(MouseMovedEvent& e);
-		bool ImGuiOnMouseReleased(MouseButtonReleasedEvent& e);
-		bool ImGuiOnMouseScroll(MouseScrolledEvent& e);
 
 		//To Do Key Events
 

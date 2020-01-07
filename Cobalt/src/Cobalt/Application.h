@@ -3,6 +3,7 @@
 #include "Core.h"
 #include "Window.h"
 #include "LayerStack.h"
+#include "Cobalt/ImGui/ImGuiLayer.h"
 
 namespace Cobalt {
 	class COBALT_API Application
@@ -22,6 +23,7 @@ namespace Cobalt {
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
 		std::unique_ptr<Window> m_window;
+		ImGuiLayer* m_ImGuiLayer;
 		bool m_running = true;
 
 		LayerStack m_layerStack;
