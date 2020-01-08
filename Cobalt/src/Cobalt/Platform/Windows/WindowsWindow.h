@@ -2,7 +2,10 @@
 
 #include "Cobalt/Window.h"
 
+#include "Cobalt/Renderer/GraphicsContext.h"
+
 #include <GLFW/glfw3.h>
+
 
 namespace Cobalt {
 
@@ -33,6 +36,7 @@ namespace Cobalt {
 
 
 		GLFWwindow* m_window;
+		GraphicsContext* m_context;
 
 		struct WindowData {
 			std::string title;

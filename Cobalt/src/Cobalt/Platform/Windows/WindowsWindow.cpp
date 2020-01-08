@@ -2,7 +2,8 @@
 #include "cbpc.h"
 #include "WindowsWindow.h"
 
-#include <glad/glad.h>
+#include "Cobalt/Platform/OpenGL/OpenGLContext.h"
+
 
 namespace Cobalt {
 
@@ -29,6 +30,8 @@ namespace Cobalt {
 		m_data.width = prop.width;
 		m_data.height = prop.height;
 
+		
+
 		COBALT_CORE_INFO("Creating Window {0} ({1} {2})", prop.title, prop.width, prop.height);
 
 		if (!s_GLFWInitialized) {
@@ -44,10 +47,13 @@ namespace Cobalt {
 		}
 
 		m_window = glfwCreateWindow((int)prop.width, (int)prop.height, prop.title.c_str(), nullptr, nullptr);
-		glfwMakeContextCurrent(m_window);
-		//This initiallizes glad
-		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
-		COBALT_CORE_ASSERT(status, "FAILED TO INITIALIZE GLAD");
+		//Create the context
+		//This is where we would switch from OpenGL to DirectX etc
+		m_context = new OpenGLContext(m_window);
+
+		m_context->Init();
+		//
+		
 
 		glfwSetWindowUserPointer(m_window, &m_data);
 		SetVSync(true);
@@ -139,7 +145,9 @@ namespace Cobalt {
 
 	void WindowsWindow::OnUpdate() {
 		glfwPollEvents();
-		glfwSwapBuffers(m_window);
+		//this will be implemented in the abstraction of the context
+		m_context->SwapBuffers();
+		
 	}
 
 	void WindowsWindow::SetVSync(bool enabled) {

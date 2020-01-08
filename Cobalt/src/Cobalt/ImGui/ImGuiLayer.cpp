@@ -83,8 +83,10 @@ namespace Cobalt {
 	}
 	//Render is the function you will use in order to create a context
 	void ImGuiLayer::OnImGuiRender() {
-		static bool show = false;
-		ImGui::ShowDemoWindow(&show);
+		/*
+			static bool show = false;
+			ImGui::ShowDemoWindow(&show);
+		*/
 	}
 
 
