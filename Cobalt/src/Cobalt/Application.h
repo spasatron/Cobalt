@@ -5,6 +5,8 @@
 #include "LayerStack.h"
 #include "Cobalt/ImGui/ImGuiLayer.h"
 
+#include "Cobalt/Renderer/Shader.h"
+
 namespace Cobalt {
 	class COBALT_API Application
 	{
@@ -25,6 +27,8 @@ namespace Cobalt {
 		std::unique_ptr<Window> m_window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_running = true;
+
+		std::unique_ptr<Shader> m_shader;
 
 		LayerStack m_layerStack;
 

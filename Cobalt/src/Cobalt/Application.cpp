@@ -53,6 +53,37 @@ namespace Cobalt {
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indeces), indeces, GL_STATIC_DRAW);
 
 
+		std::string vertSrc = R"(
+			#version 330 core
+			
+			layout(location = 0) in vec3 a_position;
+
+			out vec3 v_position;
+
+			void main(){
+				v_position = a_position;
+				gl_Position = vec4(a_position,1);
+			}
+		)";
+
+		std::string fragSrc = R"(
+			#version 330 core
+			
+			layout(location = 0) out vec4 o_color;
+			
+			in vec3 v_position;
+
+			void main(){
+				o_color = vec4(v_position + .5, 1);
+			}
+		)";
+
+		m_shader.reset(new Shader(vertSrc, fragSrc));
+
+
+
+
+
 	}
 	Application::~Application() {
 
@@ -81,6 +112,8 @@ namespace Cobalt {
 		while (m_running) {
 			glClearColor(0, .2, .8, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			m_shader->Bind();
 
 			glBindVertexArray(m_vertexArray);
 			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
