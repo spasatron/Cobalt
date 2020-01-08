@@ -21,6 +21,12 @@ public:
 		//COBALT_TRACE("Event Detected{0}", e);
 
 	}
+	//How to override th ImGui Layer
+	void OnImGuiRender() override {
+		ImGui::Begin("Text");
+		ImGui::TextColored(ImVec4(1, 0, 0, 1), "Hello");
+		ImGui::End();
+	}
 
 };
 

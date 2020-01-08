@@ -23,8 +23,10 @@ include "Cobalt/vendor/imgui"
 
 project "Cobalt"
     location "Cobalt"
-    kind "SharedLib"
+    kind "StaticLib"
     language "C++"
+    staticruntime "On"
+    cppdialect "C++17"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -39,7 +41,9 @@ project "Cobalt"
         "%{prj.name}/vendor/glm/glm/**.hpp",
         "%{prj.name}/vendor/glm/glm/**.inl"
     }
-
+    defines{
+        "_CRT_SECURE_NO_WARNINGS"
+    }
     includedirs
     {
         "%{prj.name}/vendor/spdlog/include",
@@ -56,8 +60,8 @@ project "Cobalt"
         "opengl32.lib"
     }
     filter "system:windows"
-        cppdialect "C++17"
-        staticruntime "On"
+        
+        
         systemversion "latest"
 
         defines
@@ -66,11 +70,6 @@ project "Cobalt"
             "CB_BUILD_DLL",
             "GLFW_INCLUDE_NONE"
         }
-        postbuildcommands
-        {
-            "{COPY} %{cfg.buildtarget.relpath} ../bin/" .. outputdir .. "/Sandbox"
-        }
-
 
         filter "configurations:Debug"
             defines
@@ -78,17 +77,14 @@ project "Cobalt"
                 "CB_DEBUG",
                 "CB_ENABLE_ASSERT"
             }
-            buildoptions "/MDd"
             symbols "On"
 
         filter "configurations:Release"
             defines "CB_RELEASE"
-            buildoptions "/MD"
             optimize "On"
 
         filter "configurations:Dist"
             defines "CB_DIST"
-            buildoptions "/MD"
             optimize "On"
 
 project "Sandbox"
@@ -96,7 +92,7 @@ project "Sandbox"
         kind "ConsoleApp"
         language "C++"
         cppdialect "C++17"
-        staticruntime "On"
+        staticruntime "on"
 
     targetdir ("bin/" .. outputdir .. "/%{prj.name}")
     objdir ("bin-int/" .. outputdir .. "/%{prj.name}")
@@ -133,14 +129,11 @@ project "Sandbox"
         filter "configurations:Debug"
             defines "CB_DEBUG"
             symbols "On"
-            buildoptions "/MDd"
 
         filter "configurations:Release"
             defines "CB_RELEASE"
             optimize "On"
-            buildoptions "/MD"
 
         filter "configurations:Dist"
             defines "CB_DIST"
             optimize "On"
-            buildoptions "/MD"

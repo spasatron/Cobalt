@@ -65,7 +65,7 @@ namespace Cobalt {
 	void ImGuiLayer::End(){
 		ImGuiIO& io = ImGui::GetIO();
 		Application& app = Application::GetApplication();
-		io.DisplaySize = ImVec2(app.GetWindow().GetWidth(), app.GetWindow().GetHeight());
+		io.DisplaySize = ImVec2((float)app.GetWindow().GetWidth(), (float)app.GetWindow().GetHeight());
 		//render
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -83,7 +83,7 @@ namespace Cobalt {
 	}
 	//Render is the function you will use in order to create a context
 	void ImGuiLayer::OnImGuiRender() {
-		static bool show = true;
+		static bool show = false;
 		ImGui::ShowDemoWindow(&show);
 	}
 
