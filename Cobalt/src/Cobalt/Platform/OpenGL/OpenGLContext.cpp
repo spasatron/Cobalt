@@ -18,6 +18,8 @@ namespace Cobalt {
 		//This initiallizes glad
 		int status = gladLoadGLLoader((GLADloadproc)glfwGetProcAddress);
 		COBALT_CORE_ASSERT(status, "FAILED TO INITIALIZE GLAD");
+
+		COBALT_CORE_INFO("OpenGL Renderer: {0} {1}", glGetString(GL_VENDOR), glGetString(GL_RENDERER));
 	}
 
 	void OpenGLContext::SwapBuffers(){
