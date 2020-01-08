@@ -30,6 +30,9 @@ namespace Cobalt {
 
 		static Application* s_instance;
 
+		//Rendering a triangle, temporary
+		unsigned int m_vertexArray, m_vertextBuffer, m_indexBuffer;
+
 	};
 	Application* CreateApplication();
 }

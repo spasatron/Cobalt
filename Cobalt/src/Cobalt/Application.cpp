@@ -12,7 +12,6 @@ namespace Cobalt {
 //jsut sets the eventFunction to be whatever is passed in
 
 
-
 	Application* Application::s_instance = nullptr;
 
 	Application::Application() {
@@ -25,6 +24,35 @@ namespace Cobalt {
 
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
+
+		glGenVertexArrays(1, &m_vertexArray);
+		glBindVertexArray(m_vertexArray);
+
+		glGenBuffers(1, &m_vertextBuffer);
+		glBindBuffer(GL_ARRAY_BUFFER, m_vertextBuffer);
+
+
+		//Without projection matrices the axis go from -1 to 1
+		float vertices[3 * 3] = {
+			-0.5f, -0.5f, -1.0f,
+			0.5f, -0.5f, 1.0f,
+			0.8f, 0.4f, 0.5f
+		};
+
+		//We need to upload the data to the GPU
+
+		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+		glEnableVertexAttribArray(0);
+		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), nullptr);
+		
+		glGenBuffers(1, &m_indexBuffer);
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
+
+		unsigned int indeces[3] = { 0,1,2 };
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indeces), indeces, GL_STATIC_DRAW);
+
+
 	}
 	Application::~Application() {
 
@@ -53,6 +81,9 @@ namespace Cobalt {
 		while (m_running) {
 			glClearColor(0, .2, .8, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
+
+			glBindVertexArray(m_vertexArray);
+			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_layerStack)
 				layer->OnUpdate();
