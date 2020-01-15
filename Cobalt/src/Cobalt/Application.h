@@ -6,6 +6,7 @@
 #include "Cobalt/ImGui/ImGuiLayer.h"
 
 #include "Cobalt/Renderer/Shader.h"
+#include "Cobalt/Renderer/Buffer.h"
 
 namespace Cobalt {
 	class COBALT_API Application
@@ -29,13 +30,15 @@ namespace Cobalt {
 		bool m_running = true;
 
 		std::unique_ptr<Shader> m_shader;
+		std::unique_ptr<VertexBuffer> m_vertexBuffer;
+		std::unique_ptr<IndexBuffer> m_indexBuffer;
 
 		LayerStack m_layerStack;
 
 		static Application* s_instance;
 
 		//Rendering a triangle, temporary
-		unsigned int m_vertexArray, m_vertextBuffer, m_indexBuffer;
+		unsigned int m_vertexArray;
 
 	};
 	Application* CreateApplication();

@@ -14,6 +14,42 @@ namespace Cobalt {
 
 	Application* Application::s_instance = nullptr;
 
+
+	static GLenum ShaderDataTypeToOpenGLType(ShaderDataType type) {
+		switch (type)
+		{
+			
+		case Cobalt::ShaderDataType::Float:
+		
+		case Cobalt::ShaderDataType::Float2:
+
+		case Cobalt::ShaderDataType::Float3:
+
+		case Cobalt::ShaderDataType::Float4:
+
+		case Cobalt::ShaderDataType::Mat3:
+
+		case Cobalt::ShaderDataType::Mat4:
+			return GL_FLOAT;
+
+		case Cobalt::ShaderDataType::Int:
+
+		case Cobalt::ShaderDataType::Int2:
+
+		case Cobalt::ShaderDataType::Int3:
+
+		case Cobalt::ShaderDataType::Int4:
+			return GL_INT;
+
+		case Cobalt::ShaderDataType::Bool:
+			return GL_BOOL;
+		}
+
+		COBALT_CORE_ASSERT(false, "Unknown ShaderDataType");
+		return 0;
+
+	}
+
 	Application::Application() {
 
 		COBALT_CORE_ASSERT(!s_instance, "One Application Already Exists");
@@ -25,43 +61,58 @@ namespace Cobalt {
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
 
+		//Getting removed
 		glGenVertexArrays(1, &m_vertexArray);
 		glBindVertexArray(m_vertexArray);
 
-		glGenBuffers(1, &m_vertextBuffer);
-		glBindBuffer(GL_ARRAY_BUFFER, m_vertextBuffer);
-
 
 		//Without projection matrices the axis go from -1 to 1
-		float vertices[3 * 3] = {
-			-0.5f, -0.5f, -1.0f,
-			0.5f, -0.5f, 1.0f,
-			0.8f, 0.4f, 0.5f
+		float vertices[3 * 6] = {
+			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
+			0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.5f, 0.0f, 1.0f, 0.0f, 0.0f
 		};
 
 		//We need to upload the data to the GPU
+		m_vertexBuffer.reset(VertexBuffer::Create(vertices, sizeof(vertices)));
 
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-		glEnableVertexAttribArray(0);
-		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3*sizeof(float), nullptr);
+		{
+			BufferLayout layout = {
+				{ShaderDataType::Float3, "vertices"},
+				{ShaderDataType::Float3, "color"}
+			};
+			m_vertexBuffer->SetLayout(layout);
+		}
 		
-		glGenBuffers(1, &m_indexBuffer);
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_indexBuffer);
+		const auto& layout = m_vertexBuffer->GetLayout();
 
-		unsigned int indeces[3] = { 0,1,2 };
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indeces), indeces, GL_STATIC_DRAW);
+		uint32_t index = 0;
 
+		for (const auto& element : layout) {
+			glEnableVertexAttribArray(index);
+			glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLType(element.type), element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)element.offset);
+			index++;
+		}
+
+		//Designates layout
+		
+		
+
+		uint32_t indices[3] = { 0,1,2 };
+		
+		m_indexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices)/sizeof(uint32_t)));
 
 		std::string vertSrc = R"(
 			#version 330 core
 			
 			layout(location = 0) in vec3 a_position;
+			layout(location = 1) in vec3 a_color;
 
 			out vec3 v_position;
-
+			out vec3 v_color;
 			void main(){
 				v_position = a_position;
+				v_color = a_color;
 				gl_Position = vec4(a_position,1);
 			}
 		)";
@@ -72,9 +123,10 @@ namespace Cobalt {
 			layout(location = 0) out vec4 o_color;
 			
 			in vec3 v_position;
-
+			in vec3 v_color;
+			
 			void main(){
-				o_color = vec4(v_position + .5, 1);
+				o_color = vec4(v_color, 1);
 			}
 		)";
 
@@ -116,7 +168,7 @@ namespace Cobalt {
 			m_shader->Bind();
 
 			glBindVertexArray(m_vertexArray);
-			glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_INT, nullptr);
+			glDrawElements(GL_TRIANGLES, m_indexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_layerStack)
 				layer->OnUpdate();
