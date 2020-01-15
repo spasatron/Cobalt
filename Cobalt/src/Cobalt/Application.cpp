@@ -1,8 +1,8 @@
 #include "cbpc.h"
 #include "Application.h"
 
-#include <glad/glad.h>
 #include "Cobalt/Input.h"
+#include "Cobalt/Renderer/Renderer.h"
 
 #include "Cobalt/ImGui/ImGuiLayer.h"
 
@@ -171,19 +171,21 @@ namespace Cobalt {
 	void Application::Run() {
 		
 		while (m_running) {
-			glClearColor(0, .2, .8, 1);
-			glClear(GL_COLOR_BUFFER_BIT);
 
-			
+			RenderCommand::SetClearColor({ 0, .2, .8, 1 });
+			RenderCommand::Clear();
+
+
+			Renderer::BeginScene();
 			m_shaderSq->Bind();
-			m_vertexArraySq->Bind();
-			glDrawElements(GL_TRIANGLES, m_vertexArraySq->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
-
+			Renderer::Submit(m_vertexArraySq);
 			m_shader->Bind();
-			m_vertexArray->Bind();
-			
+			Renderer::Submit(m_vertexArray);
+			Renderer::EndScene();
 
-			glDrawElements(GL_TRIANGLES, m_indexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
+			//Renderer::Flush()
+
+		
 
 			for (Layer* layer : m_layerStack)
 				layer->OnUpdate();

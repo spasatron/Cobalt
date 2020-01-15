@@ -12,9 +12,9 @@ namespace Cobalt {
 	VertexBuffer* VertexBuffer::Create(float* vertices, uint32_t size) {
 
 		switch (Renderer::GetRendererAPI()) {
-		case RendererAPI::OpenGL:
+		case RendererAPI::API::OpenGL:
 			return new OpenGLVertexBuffer(vertices, size);
-		case RendererAPI::None:
+		case RendererAPI::API::None:
 			COBALT_INFO("None Render API SELECTED");
 			return nullptr;
 		}
@@ -26,9 +26,9 @@ namespace Cobalt {
 
 	IndexBuffer* IndexBuffer::Create(uint32_t* indices, uint32_t count) {
 		switch (Renderer::GetRendererAPI()) {
-		case RendererAPI::OpenGL:
+		case RendererAPI::API::OpenGL:
 			return new OpenGLIndexBuffer(indices, count);
-		case RendererAPI::None:
+		case RendererAPI::API::None:
 			COBALT_INFO("None Render API SELECTED");
 			return nullptr;
 		}
