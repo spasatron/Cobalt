@@ -15,40 +15,7 @@ namespace Cobalt {
 	Application* Application::s_instance = nullptr;
 
 
-	static GLenum ShaderDataTypeToOpenGLType(ShaderDataType type) {
-		switch (type)
-		{
-			
-		case Cobalt::ShaderDataType::Float:
-		
-		case Cobalt::ShaderDataType::Float2:
-
-		case Cobalt::ShaderDataType::Float3:
-
-		case Cobalt::ShaderDataType::Float4:
-
-		case Cobalt::ShaderDataType::Mat3:
-
-		case Cobalt::ShaderDataType::Mat4:
-			return GL_FLOAT;
-
-		case Cobalt::ShaderDataType::Int:
-
-		case Cobalt::ShaderDataType::Int2:
-
-		case Cobalt::ShaderDataType::Int3:
-
-		case Cobalt::ShaderDataType::Int4:
-			return GL_INT;
-
-		case Cobalt::ShaderDataType::Bool:
-			return GL_BOOL;
-		}
-
-		COBALT_CORE_ASSERT(false, "Unknown ShaderDataType");
-		return 0;
-
-	}
+	
 
 	Application::Application() {
 
@@ -61,10 +28,10 @@ namespace Cobalt {
 		m_ImGuiLayer = new ImGuiLayer();
 		PushOverlay(m_ImGuiLayer);
 
-		//Getting removed
-		glGenVertexArrays(1, &m_vertexArray);
-		glBindVertexArray(m_vertexArray);
+		
 
+		m_vertexArray.reset(VertexArray::Create());
+		
 
 		//Without projection matrices the axis go from -1 to 1
 		float vertices[3 * 6] = {
@@ -83,17 +50,9 @@ namespace Cobalt {
 			};
 			m_vertexBuffer->SetLayout(layout);
 		}
-		
-		const auto& layout = m_vertexBuffer->GetLayout();
 
-		uint32_t index = 0;
 
-		for (const auto& element : layout) {
-			glEnableVertexAttribArray(index);
-			glVertexAttribPointer(index, element.GetComponentCount(), ShaderDataTypeToOpenGLType(element.type), element.normalized ? GL_TRUE : GL_FALSE, layout.GetStride(), (const void*)element.offset);
-			index++;
-		}
-
+		m_vertexArray->AddVertexBuffer(m_vertexBuffer);
 		//Designates layout
 		
 		
@@ -101,6 +60,31 @@ namespace Cobalt {
 		uint32_t indices[3] = { 0,1,2 };
 		
 		m_indexBuffer.reset(IndexBuffer::Create(indices, sizeof(indices)/sizeof(uint32_t)));
+
+		m_vertexArray->SetIndexBuffer(m_indexBuffer);
+
+		float verticesSq[3 * 4] = {
+			-0.5f, 0.0f, 0.0f,
+			0.5f, 0.0f, 0.0f,
+			0.5f, 0.5f, 0.0f,
+			-0.5f, 0.5f, 0.0f
+		};
+
+		m_vertexArraySq.reset(VertexArray::Create());
+		std::shared_ptr<VertexBuffer> squareVB;
+		squareVB.reset(VertexBuffer::Create(verticesSq, sizeof(verticesSq)));
+
+		BufferLayout layoutSq = {
+				{ShaderDataType::Float3, "vertices"}
+		};
+		squareVB->SetLayout(layoutSq);
+
+		uint32_t indicesSq[6] = { 0,1,2, 2, 3, 0};
+
+		std::shared_ptr<IndexBuffer> squareIB;
+		squareIB.reset(IndexBuffer::Create(indicesSq, sizeof(indicesSq) / sizeof(uint32_t)));
+		m_vertexArraySq->AddVertexBuffer(squareVB);
+		m_vertexArraySq->SetIndexBuffer(squareIB);
 
 		std::string vertSrc = R"(
 			#version 330 core
@@ -129,8 +113,33 @@ namespace Cobalt {
 				o_color = vec4(v_color, 1);
 			}
 		)";
-
 		m_shader.reset(new Shader(vertSrc, fragSrc));
+		std::string vertSrcSq = R"(
+			#version 330 core
+			
+			layout(location = 0) in vec3 a_position;
+
+			out vec3 v_position;
+
+			void main(){
+				v_position = a_position;
+				gl_Position = vec4(a_position,1);
+			}
+		)";
+
+		std::string fragSrcSq = R"(
+			#version 330 core
+			
+			layout(location = 0) out vec4 o_color;
+			
+			in vec3 v_position;
+			
+			void main(){
+				o_color = vec4(.8, .2, .35, 1);
+			}
+		)";
+
+		m_shaderSq.reset(new Shader(vertSrcSq, fragSrcSq));
 
 
 
@@ -165,9 +174,15 @@ namespace Cobalt {
 			glClearColor(0, .2, .8, 1);
 			glClear(GL_COLOR_BUFFER_BIT);
 
-			m_shader->Bind();
+			
+			m_shaderSq->Bind();
+			m_vertexArraySq->Bind();
+			glDrawElements(GL_TRIANGLES, m_vertexArraySq->GetIndexBuffer()->GetCount(), GL_UNSIGNED_INT, nullptr);
 
-			glBindVertexArray(m_vertexArray);
+			m_shader->Bind();
+			m_vertexArray->Bind();
+			
+
 			glDrawElements(GL_TRIANGLES, m_indexBuffer->GetCount(), GL_UNSIGNED_INT, nullptr);
 
 			for (Layer* layer : m_layerStack)
