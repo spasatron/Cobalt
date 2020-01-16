@@ -28,22 +28,11 @@ namespace Cobalt {
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
-		bool Test(KeyPressedEvent& e);
 		std::unique_ptr<Window> m_window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_running = true;
 
-		std::shared_ptr<Shader> m_shader;
-		std::shared_ptr<VertexArray> m_vertexArray;
-		std::shared_ptr<VertexBuffer> m_vertexBuffer;
-		std::shared_ptr<IndexBuffer> m_indexBuffer;
-
-		//Drawing a square
-
-		std::shared_ptr<VertexArray> m_vertexArraySq;
-		std::shared_ptr<Shader> m_shaderSq;
-
-		OrthographicCamera m_camera;
+		
 
 		LayerStack m_layerStack;
 
