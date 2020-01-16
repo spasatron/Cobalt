@@ -9,6 +9,8 @@
 #include "Cobalt/Renderer/Buffer.h"
 #include "Cobalt/Renderer/VertexArray.h"
 
+#include "Cobalt/Renderer/OrthographicCamera.h"
+
 namespace Cobalt {
 	class COBALT_API Application
 	{
@@ -26,6 +28,7 @@ namespace Cobalt {
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+		bool Test(KeyPressedEvent& e);
 		std::unique_ptr<Window> m_window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_running = true;
@@ -39,6 +42,8 @@ namespace Cobalt {
 
 		std::shared_ptr<VertexArray> m_vertexArraySq;
 		std::shared_ptr<Shader> m_shaderSq;
+
+		OrthographicCamera m_camera;
 
 		LayerStack m_layerStack;
 

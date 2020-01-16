@@ -1,6 +1,7 @@
 #include "cbpc.h"
 #include "Shader.h"
 
+#include <glm/gtc/type_ptr.hpp>
 #include <glad/glad.h>
 
 Cobalt::Shader::Shader(const std::string& vertexSrc, const std::string& fragmentSrc){
@@ -127,4 +128,9 @@ void Cobalt::Shader::Bind() const{
 
 void Cobalt::Shader::UnBind() const{
 	glUseProgram(0);
+}
+
+void Cobalt::Shader::UploadUniformMat4(const std::string& name, const glm::mat4& uniform){
+	GLint location = glGetUniformLocation(m_rendererId, name.c_str());
+	glUniformMatrix4fv(location, 1, GL_FALSE, glm::value_ptr(uniform));
 }

@@ -3,7 +3,7 @@
 
 #include "Cobalt/Input.h"
 #include "Cobalt/Renderer/Renderer.h"
-
+#include "Cobalt/KeyCodes.h"
 #include "Cobalt/ImGui/ImGuiLayer.h"
 
 namespace Cobalt {
@@ -17,7 +17,7 @@ namespace Cobalt {
 
 	
 
-	Application::Application() {
+	Application::Application() : m_camera(-1.6f, 1.6f, -.9f, .9f){
 
 		COBALT_CORE_ASSERT(!s_instance, "One Application Already Exists");
 
@@ -64,8 +64,8 @@ namespace Cobalt {
 		m_vertexArray->SetIndexBuffer(m_indexBuffer);
 
 		float verticesSq[3 * 4] = {
-			-0.5f, 0.0f, 0.0f,
-			0.5f, 0.0f, 0.0f,
+			-0.5f, -.5f, 0.0f,
+			0.5f, -.5f, 0.0f,
 			0.5f, 0.5f, 0.0f,
 			-0.5f, 0.5f, 0.0f
 		};
@@ -73,6 +73,8 @@ namespace Cobalt {
 		m_vertexArraySq.reset(VertexArray::Create());
 		std::shared_ptr<VertexBuffer> squareVB;
 		squareVB.reset(VertexBuffer::Create(verticesSq, sizeof(verticesSq)));
+
+		
 
 		BufferLayout layoutSq = {
 				{ShaderDataType::Float3, "vertices"}
@@ -91,13 +93,15 @@ namespace Cobalt {
 			
 			layout(location = 0) in vec3 a_position;
 			layout(location = 1) in vec3 a_color;
+			
+			uniform mat4 u_viewProjection;
 
 			out vec3 v_position;
 			out vec3 v_color;
 			void main(){
 				v_position = a_position;
 				v_color = a_color;
-				gl_Position = vec4(a_position,1);
+				gl_Position = u_viewProjection*vec4(a_position,1);
 			}
 		)";
 
@@ -118,12 +122,13 @@ namespace Cobalt {
 			#version 330 core
 			
 			layout(location = 0) in vec3 a_position;
+			uniform mat4 u_viewProjection;			
 
-			out vec3 v_position;
+			out vec4 v_position;
 
 			void main(){
-				v_position = a_position;
-				gl_Position = vec4(a_position,1);
+				gl_Position = u_viewProjection*vec4(a_position,1);
+				v_position = gl_Position;
 			}
 		)";
 
@@ -132,10 +137,11 @@ namespace Cobalt {
 			
 			layout(location = 0) out vec4 o_color;
 			
-			in vec3 v_position;
+			in vec4 v_position;
 			
 			void main(){
 				o_color = vec4(.8, .2, .35, 1);
+				o_color = v_position + .5;
 			}
 		)";
 
@@ -153,8 +159,7 @@ namespace Cobalt {
 
 		EventDispatcher eventDispatcher(e);
 		eventDispatcher.Dispatch<WindowCloseEvent>(COBALT_BIND_EVENT_FUNCTION(Application::OnWindowClose));
-
-
+		eventDispatcher.Dispatch<KeyPressedEvent>(COBALT_BIND_EVENT_FUNCTION(Application::Test));
 		//COBALT_CORE_TRACE("{0}", e);
 
 		for (auto it = m_layerStack.end(); it != m_layerStack.begin();) {
@@ -175,13 +180,18 @@ namespace Cobalt {
 			RenderCommand::SetClearColor({ 0, .2, .8, 1 });
 			RenderCommand::Clear();
 
-
 			Renderer::BeginScene();
 			m_shaderSq->Bind();
+			m_shaderSq->UploadUniformMat4("u_viewProjection", m_camera.GetViewProjectionMatrix());
 			Renderer::Submit(m_vertexArraySq);
 			m_shader->Bind();
+			m_shader->UploadUniformMat4("u_viewProjection", m_camera.GetViewProjectionMatrix());
 			Renderer::Submit(m_vertexArray);
 			Renderer::EndScene();
+
+			
+			
+
 
 			//Renderer::Flush()
 
@@ -204,6 +214,17 @@ namespace Cobalt {
 	bool Application::OnWindowClose(WindowCloseEvent& e) {
 		m_running = false;
 		return true;
+	}
+	bool Application::Test(KeyPressedEvent& e) {
+		if (e.GetKeyCode() == COBALT_KEY_A) {
+			//COBALT_INFO("Hello {0}, {1}", m_camera.GetRotation(), m_camera.GetRotation() + .5f);
+			m_camera.SetRotation(m_camera.GetRotation() + 3.0f);
+		}
+		if (e.GetKeyCode() == COBALT_KEY_D) {
+			//COBALT_INFO("Hello {0}, {1}", m_camera.GetRotation(), m_camera.GetRotation() - .5f);
+			m_camera.SetRotation(m_camera.GetRotation() - 3.0f);
+		}
+		return false;
 	}
 
 	void Application::PushLayer(Layer* layer) {
