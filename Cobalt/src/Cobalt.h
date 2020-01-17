@@ -8,6 +8,9 @@
 #include "Cobalt/Layer.h"
 #include "Cobalt/ImGui/ImGuiLayer.h"
 
+
+#include "Cobalt/Core/TimeStep.h"
+
 //Input
 
 #include "Cobalt/KeyCodes.h"

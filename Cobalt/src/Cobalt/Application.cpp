@@ -6,6 +6,8 @@
 #include "Cobalt/KeyCodes.h"
 #include "Cobalt/ImGui/ImGuiLayer.h"
 
+#include <GLFW/glfw3.h>
+
 namespace Cobalt {
 
 
@@ -56,10 +58,15 @@ namespace Cobalt {
 
 			//Renderer::Flush()
 
+			float time = (float)glfwGetTime(); //Needs to be platform independant
+			TimeStep timeStep = time - m_lastFrameTime;
+			m_lastFrameTime = time;
+
+
 		
 
 			for (Layer* layer : m_layerStack)
-				layer->OnUpdate();
+				layer->OnUpdate(timeStep);
 
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_layerStack)
@@ -69,6 +76,9 @@ namespace Cobalt {
 			//COBALT_CORE_INFO("{0}", Input::IsKeyPressed(65));
 			m_window->OnUpdate();
 		}
+
+
+
 
 	}
 

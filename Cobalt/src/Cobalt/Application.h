@@ -9,6 +9,8 @@
 #include "Cobalt/Renderer/Buffer.h"
 #include "Cobalt/Renderer/VertexArray.h"
 
+#include "Cobalt/Core/TimeStep.h"
+
 #include "Cobalt/Renderer/OrthographicCamera.h"
 
 namespace Cobalt {
@@ -28,10 +30,12 @@ namespace Cobalt {
 
 	private:
 		bool OnWindowClose(WindowCloseEvent& e);
+	private:
 		std::unique_ptr<Window> m_window;
 		ImGuiLayer* m_ImGuiLayer;
 		bool m_running = true;
 
+		float m_lastFrameTime = 0.0f;
 		
 
 		LayerStack m_layerStack;

@@ -11,14 +11,14 @@ public:
 	ExampleLayer() : Layer("Example Layer"), m_camera(-1.6f, 1.6f, -.9f, .9f){
 	}
 
-	void OnUpdate() override{
+	void OnUpdate(Cobalt::TimeStep ts) override{
 
 
 		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_Q)) {
-			m_camera.SetRotation(m_camera.GetRotation() - 1);
+			m_camera.SetRotation(m_camera.GetRotation() - 20*ts);
 		}
 		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_E)) {
-			m_camera.SetRotation(m_camera.GetRotation() + 1);
+			m_camera.SetRotation(m_camera.GetRotation() + 20*ts);
 		}
 
 
