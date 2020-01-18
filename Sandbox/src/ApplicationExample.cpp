@@ -2,6 +2,9 @@
 
 #include "imgui/imgui.h"
 
+#include <glm/gtc/matrix_transform.hpp>
+
+#include "Cobalt/Platform/OpenGL/OpenGLShader.h"
 
 
 
@@ -13,12 +16,23 @@ public:
 
 	void OnUpdate(Cobalt::TimeStep ts) override{
 
-
 		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_Q)) {
-			m_camera.SetRotation(m_camera.GetRotation() - 20*ts);
+			m_camera.SetRotation(m_camera.GetRotation() - 200*ts);
 		}
 		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_E)) {
-			m_camera.SetRotation(m_camera.GetRotation() + 20*ts);
+			m_camera.SetRotation(m_camera.GetRotation() + 200*ts);
+		}
+		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_A)) {
+			squarePosition.x -= 1 * ts;
+		}
+		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_D)) {
+			squarePosition.x += 1 * ts;
+		}
+		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_S)) {
+			squarePosition.y -= 1 * ts;
+		}
+		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_W)) {
+			squarePosition.y += 1 * ts;
 		}
 
 
@@ -27,8 +41,15 @@ public:
 
 		Cobalt::Renderer::BeginScene(m_camera);
 
-		Cobalt::Renderer::Submit(m_shaderSq, m_vertexArraySq);
-		Cobalt::Renderer::Submit(m_shader, m_vertexArray);
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), squarePosition);
+
+		for (int i = 0; i < 10; i++) {
+			for (int j = 0; j < 10; j++) {
+				glm::mat4 trans = glm::translate(glm::mat4(1.0f), { squarePosition.x + i / (6.0f), squarePosition.y - j/(6.0f), squarePosition.z }) * glm::scale(glm::mat4(1.0f), glm::vec3(.1f));
+				Cobalt::Renderer::Submit(m_shaderSq, m_vertexArraySq, trans);
+			}
+		}
+			//	Cobalt::Renderer::Submit(m_shader, m_vertexArray);
 
 		Cobalt::Renderer::EndScene();
 
@@ -96,7 +117,7 @@ public:
 		};
 
 		m_vertexArraySq.reset(Cobalt::VertexArray::Create());
-		std::shared_ptr<Cobalt::VertexBuffer> squareVB;
+		Cobalt::Ref<Cobalt::VertexBuffer> squareVB;
 		squareVB.reset(Cobalt::VertexBuffer::Create(verticesSq, sizeof(verticesSq)));
 
 
@@ -108,7 +129,7 @@ public:
 
 		uint32_t indicesSq[6] = { 0,1,2, 2, 3, 0 };
 
-		std::shared_ptr<Cobalt::IndexBuffer> squareIB;
+		Cobalt::Ref<Cobalt::IndexBuffer> squareIB;
 		squareIB.reset(Cobalt::IndexBuffer::Create(indicesSq, sizeof(indicesSq) / sizeof(uint32_t)));
 		m_vertexArraySq->AddVertexBuffer(squareVB);
 		m_vertexArraySq->SetIndexBuffer(squareIB);
@@ -120,13 +141,14 @@ public:
 			layout(location = 1) in vec3 a_color;
 			
 			uniform mat4 u_viewProjection;
+			uniform mat4 u_Transform;
 
 			out vec3 v_position;
 			out vec3 v_color;
 			void main(){
 				v_position = a_position;
 				v_color = a_color;
-				gl_Position = u_viewProjection*vec4(a_position,1);
+				gl_Position = u_viewProjection*u_Transform*vec4(a_position,1);
 			}
 		)";
 
@@ -142,17 +164,18 @@ public:
 				o_color = vec4(v_color, 1);
 			}
 		)";
-		m_shader.reset(new Cobalt::Shader(vertSrc, fragSrc));
+		m_shader.reset(Cobalt::Shader::Create(vertSrc, fragSrc));
 		std::string vertSrcSq = R"(
 			#version 330 core
 			
 			layout(location = 0) in vec3 a_position;
-			uniform mat4 u_viewProjection;			
+			uniform mat4 u_viewProjection;		
+			uniform mat4 u_Transform;
 
 			out vec4 v_position;
 
 			void main(){
-				gl_Position = u_viewProjection*vec4(a_position,1);
+				gl_Position = u_viewProjection*u_Transform*vec4(a_position,1);
 				v_position = gl_Position;
 			}
 		)";
@@ -170,20 +193,23 @@ public:
 			}
 		)";
 
-		m_shaderSq.reset(new Cobalt::Shader(vertSrcSq, fragSrcSq));
+		m_shaderSq.reset(Cobalt::Shader::Create(vertSrcSq, fragSrcSq));
 
 	}
 
 private:
 
-	std::shared_ptr<Cobalt::Shader> m_shader;
-	std::shared_ptr<Cobalt::VertexArray> m_vertexArray;
-	std::shared_ptr<Cobalt::VertexBuffer> m_vertexBuffer;
-	std::shared_ptr<Cobalt::IndexBuffer> m_indexBuffer;
-	std::shared_ptr<Cobalt::VertexArray> m_vertexArraySq;
-	std::shared_ptr<Cobalt::Shader> m_shaderSq;
+	Cobalt::Ref<Cobalt::Shader> m_shader;
+	Cobalt::Ref<Cobalt::VertexArray> m_vertexArray;
+	Cobalt::Ref<Cobalt::VertexBuffer> m_vertexBuffer;
+	Cobalt::Ref<Cobalt::Shader> m_shaderSq;
+	Cobalt::Ref<Cobalt::IndexBuffer> m_indexBuffer;
+	Cobalt::Ref<Cobalt::VertexArray> m_vertexArraySq;
 	Cobalt::OrthographicCamera m_camera;
 	glm::vec4 clearColor = { 0, .2, .8, 1 };
+
+
+	glm::vec3 squarePosition = { 0 ,0, 0 };
 
 };
 

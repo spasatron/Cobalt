@@ -13,7 +13,7 @@ namespace Cobalt {
 	VertexArray* VertexArray::Create(){
 		switch (Renderer::GetRendererAPI()) {
 		case RendererAPI::API::OpenGL:		return new OpenGLVertexArray();
-		case RendererAPI::API::None:			COBALT_ASSERT(false, "RenderAPI::None is currently not supported")
+		case RendererAPI::API::None:			COBALT_ASSERT(false, "RenderAPI::None is currently not supported");
 			return nullptr;
 		}
 
