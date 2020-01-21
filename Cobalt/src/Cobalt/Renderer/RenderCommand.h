@@ -8,6 +8,11 @@ namespace Cobalt {
 	class RenderCommand {
 	public:
 
+		inline static void Init() {
+			s_rendererAPI->Init();
+		}
+
+
 		inline static void Clear() {
 			s_rendererAPI->Clear();
 		}

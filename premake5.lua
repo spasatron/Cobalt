@@ -15,6 +15,7 @@ IncludeDir["GLFW"] = "Cobalt/vendor/GLFW/include"
 IncludeDir["GLAD"] = "Cobalt/vendor/GLAD/include"
 IncludeDir["ImGui"] = "Cobalt/vendor/imgui"
 IncludeDir["glm"] = "Cobalt/vendor/glm"
+IncludeDir["stb_image"] = "Cobalt/vendor/stb_image"
 
 include "Cobalt/vendor/GLFW"
 include "Cobalt/vendor/GLAD"
@@ -38,6 +39,8 @@ project "Cobalt"
     {
         "%{prj.name}/src/**.h",
         "%{prj.name}/src/**.cpp",
+        "%{prj.name}/vendor/stb_image/**.cpp",
+        "%{prj.name}/vendor/stb_image/**.h",
         "%{prj.name}/vendor/glm/glm/**.hpp",
         "%{prj.name}/vendor/glm/glm/**.inl"
     }
@@ -51,7 +54,8 @@ project "Cobalt"
         "%{IncludeDir.GLFW}",
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.ImGui}",
-        "%{IncludeDir.glm}"
+        "%{IncludeDir.glm}",
+        "%{IncludeDir.stb_image}"
     }
     links{
         "GLFW",

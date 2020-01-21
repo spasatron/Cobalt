@@ -25,6 +25,7 @@
 #include "Cobalt/Renderer/Shader.h"
 #include "Cobalt/Renderer/VertexArray.h"
 #include "Cobalt/Renderer/OrthographicCamera.h"
+#include "Cobalt/Renderer/Texture.h"
 
 
 

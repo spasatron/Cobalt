@@ -9,6 +9,10 @@ namespace Cobalt {
 
 	Renderer::SceneData* Renderer::m_sceneData = new Renderer::SceneData;
 
+	void Renderer::Init(){
+		RenderCommand::Init();
+	}
+
 	void Renderer::BeginScene(OrthographicCamera& camera) {
 		m_sceneData->viewProjectionMatrix = camera.GetViewProjectionMatrix();
 	}
