@@ -20,12 +20,18 @@ namespace Cobalt {
 
 
 
-	OpenGLShader::OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc) {
+	OpenGLShader::OpenGLShader(const std::string name, const std::string& vertexSrc, const std::string& fragmentSrc)
+		: m_name(name)
+	{
 		
 		std::unordered_map<GLenum, std::string> sources;
 		sources[GL_VERTEX_SHADER] = vertexSrc;
 		sources[GL_FRAGMENT_SHADER] = fragmentSrc;
 		Compile(sources);
+
+		
+
+
 	}
 
 	OpenGLShader::OpenGLShader(const std::string& fileName)
@@ -33,7 +39,13 @@ namespace Cobalt {
 		std::string source = ReadFile(fileName);
 		auto shaderSources = PreProcess(source);
 		Compile(shaderSources);
-
+		// assets/shaders.texture.glsl
+		// extracts texture from filepath
+		auto lastSlash = fileName.find_last_of("/\\");
+		lastSlash = lastSlash == std::string::npos ? 0 : lastSlash + 1;
+		auto lastDot = fileName.rfind('.');
+		auto count = lastDot == std::string::npos ? fileName.size() - lastSlash : lastDot - lastSlash;
+		m_name = fileName.substr(lastSlash, count);
 	}
 
 	OpenGLShader::~OpenGLShader() {
@@ -47,6 +59,7 @@ namespace Cobalt {
 	void OpenGLShader::UnBind() const {
 		glUseProgram(0);
 	}
+
 
 	void OpenGLShader::UploadUniformFloat2(const std::string& name, const glm::vec2& uniform)
 	{
@@ -71,7 +84,7 @@ namespace Cobalt {
 	std::string OpenGLShader::ReadFile(const std::string& fileName)
 	{
 		std::string result;
-		std::ifstream in(fileName, std::ios::in, std::ios::binary);
+		std::ifstream in(fileName, std::ios::in | std::ios::binary);
 
 		if (in) {
 
@@ -108,9 +121,9 @@ namespace Cobalt {
 	}
 	void OpenGLShader::Compile(const std::unordered_map<GLenum, std::string> shaderSources){
 		GLuint program = glCreateProgram();
-		std::vector<GLenum> glShaderIDs(shaderSources.size());
-
-
+		COBALT_CORE_ASSERT(shaderSources.size() <= 2, "Only 2 Shaders are supported at the moment")
+		std::array<GLenum, 2> glShaderIDs;
+		int glShaderIDIndex = 0;
 		for (auto& keyValue : shaderSources) {
 			GLenum sourceType = keyValue.first;
 			const std::string& sourceString = keyValue.second;
@@ -145,7 +158,7 @@ namespace Cobalt {
 				break;
 			}
 			glAttachShader(program, shader);
-			glShaderIDs.push_back(shader);
+			glShaderIDs[glShaderIDIndex++] = shader;
 		}
 		
 

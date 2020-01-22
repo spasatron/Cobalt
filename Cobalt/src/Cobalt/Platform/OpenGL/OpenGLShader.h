@@ -13,12 +13,13 @@ namespace Cobalt{
 
 	class OpenGLShader : public Shader {
 	public:
-		OpenGLShader(const std::string& vertexSrc, const std::string& fragmentSrc);
+		OpenGLShader(const std::string name, const std::string& vertexSrc, const std::string& fragmentSrc);
 		OpenGLShader(const std::string& fileName);
 		virtual ~OpenGLShader() override;
 
 		virtual void Bind() const;
 		virtual void UnBind() const;
+		virtual const std::string& GetName() const override { return m_name; }
 
 		virtual void UploadUniformFloat2(const std::string& name, const glm::vec2& uniform);
 		virtual void UploadUniformFloat4(const std::string& name, const glm::vec4& uniform);
@@ -30,6 +31,7 @@ namespace Cobalt{
 		void Compile(const std::unordered_map<GLenum, std::string> shaderSources);
 	private:
 		uint32_t m_rendererId;
+		std::string m_name;
 	};
 
 

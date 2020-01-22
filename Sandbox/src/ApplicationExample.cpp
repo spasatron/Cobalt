@@ -11,35 +11,18 @@
 class ExampleLayer : public Cobalt::Layer {
 
 public:
-	ExampleLayer() : Layer("Example Layer"), m_camera(-1.6f, 1.6f, -.9f, .9f){
+	ExampleLayer() : Layer("Example Layer"), m_cameraController(1280.0f/720.0f){
 	}
 
 	void OnUpdate(Cobalt::TimeStep ts) override{
 
-		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_Q)) {
-			m_camera.SetRotation(m_camera.GetRotation() - 200*ts);
-		}
-		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_E)) {
-			m_camera.SetRotation(m_camera.GetRotation() + 200*ts);
-		}
-		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_A)) {
-			squarePosition.x -= 1 * ts;
-		}
-		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_D)) {
-			squarePosition.x += 1 * ts;
-		}
-		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_S)) {
-			squarePosition.y -= 1 * ts;
-		}
-		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_W)) {
-			squarePosition.y += 1 * ts;
-		}
-
+		
+		m_cameraController.OnUpdate(ts);
 
 		Cobalt::RenderCommand::SetClearColor(clearColor);
 		Cobalt::RenderCommand::Clear();
 
-		Cobalt::Renderer::BeginScene(m_camera);
+		Cobalt::Renderer::BeginScene(m_cameraController.GetCamera());
 
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), squarePosition);
 		/*
@@ -52,9 +35,9 @@ public:
 		//	Cobalt::Renderer::Submit(m_shader, m_vertexArray);
 		*/
 		m_textureTest->Bind();
-		Cobalt::Renderer::Submit(m_textureShader, m_vertexArraySq);
+		Cobalt::Renderer::Submit(m_shaderLib.Get("texture"), m_vertexArraySq);
 		m_textureAlien->Bind();
-		Cobalt::Renderer::Submit(m_textureShader, m_vertexArraySq);
+		Cobalt::Renderer::Submit(m_shaderLib.Get("texture"), m_vertexArraySq);
 		Cobalt::Renderer::EndScene();
 
 
@@ -64,7 +47,7 @@ public:
 
 	void OnEvent(Cobalt::Event& e) override {
 
-
+		m_cameraController.OnEvent(e);
 	}
 
 
@@ -165,14 +148,14 @@ public:
 				o_color = vec4(u_color);
 			}
 		)";
-		m_flatColorShader.reset(Cobalt::Shader::Create(vertSrcFlat, fragSrcFlat));
+		m_flatColorShader = Cobalt::Shader::Create("FlatColorShader",vertSrcFlat, fragSrcFlat);
 
 		m_flatColorShader->Bind();
 		std::dynamic_pointer_cast<Cobalt::OpenGLShader>(m_flatColorShader)->UploadUniformFloat4("u_color", { .8, 0.1, 0.3, 1.0 });
 
-		m_textureShader.reset(Cobalt::Shader::Create("assets/shaders/texture.glsl"));
-		std::dynamic_pointer_cast<Cobalt::OpenGLShader>(m_textureShader)->Bind();
-		std::dynamic_pointer_cast<Cobalt::OpenGLShader>(m_textureShader)->UploadUniformInt("u_texture", 0);
+		auto textureShader = m_shaderLib.Load("assets/shaders/texture.glsl");
+		std::dynamic_pointer_cast<Cobalt::OpenGLShader>(textureShader)->Bind();
+		std::dynamic_pointer_cast<Cobalt::OpenGLShader>(textureShader)->UploadUniformInt("u_texture", 0);
 
 
 		std::string vertSrcSq = R"(
@@ -205,7 +188,7 @@ public:
 			}
 		)";
 
-		m_shaderSq.reset(Cobalt::Shader::Create(vertSrcSq, fragSrcSq));
+		m_shaderSq = Cobalt::Shader::Create("SquareShader", vertSrcSq, fragSrcSq);
 
 		m_textureTest = Cobalt::Texture2D::Create("assets/textures/map.png");
 		m_textureAlien = Cobalt::Texture2D::Create("assets/textures/alien.png");
@@ -214,7 +197,8 @@ public:
 
 private:
 
-	Cobalt::Ref<Cobalt::Shader> m_flatColorShader, m_textureShader;
+	Cobalt::ShaderLibrary m_shaderLib;
+	Cobalt::Ref<Cobalt::Shader> m_flatColorShader;
 	Cobalt::Ref<Cobalt::VertexArray> m_vertexArray;
 	Cobalt::Ref<Cobalt::VertexBuffer> m_vertexBuffer;
 	Cobalt::Ref<Cobalt::Shader> m_shaderSq;
@@ -225,7 +209,7 @@ private:
 	Cobalt::Ref<Cobalt::Texture2D> m_textureAlien;
 
 
-	Cobalt::OrthographicCamera m_camera;
+	Cobalt::OrthographicCameraController m_cameraController;
 	glm::vec4 clearColor = { 0, .2, .8, 1 };
 	glm::vec3 squarePosition = { 0 ,0, 0 };
 
