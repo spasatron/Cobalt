@@ -2,10 +2,10 @@
 
 //For use of the Cobalt applications
 
-#include "Cobalt/Application.h"
-#include "Cobalt/Log.h"
+#include "Cobalt/Core/Application.h"
+#include "Cobalt/Core/Log.h"
 #include "Cobalt/Events/Event.h"
-#include "Cobalt/Layer.h"
+#include "Cobalt/Core/Layer.h"
 #include "Cobalt/ImGui/ImGuiLayer.h"
 
 
@@ -13,13 +13,14 @@
 
 //Input
 
-#include "Cobalt/KeyCodes.h"
-#include "Cobalt/MouseButtonCodes.h"
-#include "Cobalt/Input.h"
+#include "Cobalt/Core/KeyCodes.h"
+#include "Cobalt/Core/MouseButtonCodes.h"
+#include "Cobalt/Core/Input.h"
 
 
 //Renderer
 #include "Cobalt/Renderer/Renderer.h"
+#include "Cobalt/Renderer/Renderer2D.h"
 #include "Cobalt/Renderer/RenderCommand.h"
 #include "Cobalt/Renderer/Buffer.h"
 #include "Cobalt/Renderer/Shader.h"
@@ -28,8 +29,3 @@
 #include "Cobalt/OrthographicCameraController.h"
 #include "Cobalt/Renderer/Texture.h"
 
-
-
-//------------Entry-Point-------
-#include "Cobalt/EntryPoint.h"
-//------------------------------

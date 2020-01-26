@@ -10,9 +10,9 @@ namespace Cobalt {
 
 
 
-	VertexArray* VertexArray::Create(){
+	Ref<VertexArray> VertexArray::Create(){
 		switch (Renderer::GetRendererAPI()) {
-		case RendererAPI::API::OpenGL:		return new OpenGLVertexArray();
+		case RendererAPI::API::OpenGL:		return std::make_shared<OpenGLVertexArray>();
 		case RendererAPI::API::None:			COBALT_ASSERT(false, "RenderAPI::None is currently not supported");
 			return nullptr;
 		}

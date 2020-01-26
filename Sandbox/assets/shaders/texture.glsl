@@ -27,5 +27,5 @@
 	void main(){
 
 		o_color = texture(u_texture, v_texture);
-
+		
 	}

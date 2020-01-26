@@ -16,7 +16,7 @@
 #include <unordered_map>
 #include <unordered_set>
 
-#include "Cobalt/Log.h"
+#include "Cobalt/Core/Log.h"
 
 
 #ifdef CB_PLATFORM_WINDOWS

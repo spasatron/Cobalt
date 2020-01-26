@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Cobalt/Window.h"
+#include "Cobalt/Core/Window.h"
 
 #include "Cobalt/Renderer/GraphicsContext.h"
 

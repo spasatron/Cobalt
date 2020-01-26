@@ -2,7 +2,7 @@
 
 #include "cbpc.h"
 
-#include "Cobalt/Core.h"
+#include "Cobalt/Core/Core.h"
 #include "Cobalt/Events/Event.h"
 #include "Cobalt/Events/ApplicationEvent.h"
 #include "Cobalt/Events/KeyEvent.h"

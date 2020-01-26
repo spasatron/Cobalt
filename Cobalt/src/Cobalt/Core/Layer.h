@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Cobalt/Core.h"
-#include "Events/Event.h"
+#include "Cobalt/Core/Core.h"
+#include "Cobalt/Events/Event.h"
 #include "Cobalt/Core/TimeStep.h"
 
 

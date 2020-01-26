@@ -1,7 +1,7 @@
 #include "cbpc.h"
 #include "WindowsInput.h"
 
-#include "Cobalt/Application.h"
+#include "Cobalt/Core/Application.h"
 #include <GLFW/glfw3.h>
 
 

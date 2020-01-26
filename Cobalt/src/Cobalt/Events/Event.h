@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Cobalt/Core.h"
+#include "Cobalt/Core/Core.h"
 
 namespace Cobalt {
 

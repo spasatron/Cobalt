@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Cobalt/Core.h"
-#include "Layer.h"
+#include "Cobalt/Core/Core.h"
+#include "Cobalt/Core/Layer.h"
 //Didn't know how to make use with the precompiled header
 #include <vector>
 

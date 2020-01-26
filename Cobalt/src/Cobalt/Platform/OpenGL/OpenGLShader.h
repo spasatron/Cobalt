@@ -21,7 +21,13 @@ namespace Cobalt{
 		virtual void UnBind() const;
 		virtual const std::string& GetName() const override { return m_name; }
 
+		virtual void SetInt(const std::string& name, int i) override;
+		virtual void SetMat4(const std::string& name, const glm::mat4& matrix4) override;
+		virtual void SetFloat4(const std::string& name, const glm::vec4& floatVec4) override;
+		virtual void SetFloat3(const std::string& name, const glm::vec3& floatVec3) override;
+
 		virtual void UploadUniformFloat2(const std::string& name, const glm::vec2& uniform);
+		virtual void UploadUniformFloat3(const std::string& name, const glm::vec3& uniform);
 		virtual void UploadUniformFloat4(const std::string& name, const glm::vec4& uniform);
 		virtual void UploadUniformMat4(const std::string& name, const glm::mat4& uniform);
 		virtual void UploadUniformInt(const std::string& name, int num);

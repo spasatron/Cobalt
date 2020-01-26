@@ -1,11 +1,16 @@
 #include <Cobalt.h>
+#include <Cobalt/Core/EntryPoint.h>
+
 
 #include "imgui/imgui.h"
 
 #include <glm/gtc/matrix_transform.hpp>
 
-#include "Cobalt/Platform/OpenGL/OpenGLShader.h"
 
+
+//Include Sandbox2D play layer
+#include "Sandbox2D.h"
+#include "FirstGame.h"
 
 
 class ExampleLayer : public Cobalt::Layer {
@@ -19,12 +24,33 @@ public:
 		
 		m_cameraController.OnUpdate(ts);
 
+		alienPosition.y -= ts*alienSpeed / 5;
+
+		alienSpeed += ts;
+
+		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_LEFT)) {
+			alienPosition.x -= ts;
+
+		}
+		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_UP)) {
+
+			alienSpeed -= 1;
+		}
+		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_DOWN)) {
+
+			alienPosition.y -= ts;
+		}
+		if (Cobalt::Input::IsKeyPressed(COBALT_KEY_RIGHT)) {
+			alienPosition.x += ts;
+		}
+
+
 		Cobalt::RenderCommand::SetClearColor(clearColor);
 		Cobalt::RenderCommand::Clear();
 
 		Cobalt::Renderer::BeginScene(m_cameraController.GetCamera());
 
-		glm::mat4 transform = glm::translate(glm::mat4(1.0f), squarePosition);
+		glm::mat4 transform = glm::translate(glm::mat4(1.0f), alienPosition);
 		/*
 		for (int i = 0; i < 10; i++) {
 			for (int j = 0; j < 10; j++) {
@@ -37,7 +63,7 @@ public:
 		m_textureTest->Bind();
 		Cobalt::Renderer::Submit(m_shaderLib.Get("texture"), m_vertexArraySq);
 		m_textureAlien->Bind();
-		Cobalt::Renderer::Submit(m_shaderLib.Get("texture"), m_vertexArraySq);
+		Cobalt::Renderer::Submit(m_shaderLib.Get("texture"), m_vertexArray,glm::translate(glm::mat4(1.0f), alienPosition)*glm::scale(glm::mat4(1.0f), glm::vec3(.2f)));
 		Cobalt::Renderer::EndScene();
 
 
@@ -64,9 +90,9 @@ public:
 
 	void OnAttach() override {
 
-		m_vertexArray.reset(Cobalt::VertexArray::Create());
+		m_vertexArray = Cobalt::VertexArray::Create();
 
-
+		/*
 		//Without projection matrices the axis go from -1 to 1
 		float vertices[3 * 6] = {
 			-0.5f, -0.5f, 0.0f, 0.0f, 0.0f, 1.0f,
@@ -88,24 +114,33 @@ public:
 
 		m_vertexArray->AddVertexBuffer(m_vertexBuffer);
 		//Designates layout
-
+		
 
 		uint32_t indices[3] = { 0,1,2 };
 
 		m_indexBuffer.reset(Cobalt::IndexBuffer::Create(indices, sizeof(indices) / sizeof(uint32_t)));
 
 		m_vertexArray->SetIndexBuffer(m_indexBuffer);
-
-		float verticesSq[5 * 4] = {
+		*/
+		float verticesRec[5 * 4] = {
 			-1.2f, -0.6f, 0.0f, 0.0f, 0.0f,
 			1.2f, -0.6f, 0.0f, 1.0f, 0.0f,
 			1.2f, 0.6f, 0.0f, 1.0f, 1.0f,
 			-1.2f, 0.6f, 0.0f, 0.0f, 1.0f
 		};
 
-		m_vertexArraySq.reset(Cobalt::VertexArray::Create());
+		float verticesSq[5 * 4] = {
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+			1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			-1.0f, 1.0f, 0.0f, 0.0f, 1.0f
+		};
+		
+		m_vertexBuffer = Cobalt::VertexBuffer::Create(verticesSq, sizeof(verticesSq));
+		
+		m_vertexArraySq = Cobalt::VertexArray::Create();
 		Cobalt::Ref<Cobalt::VertexBuffer> squareVB;
-		squareVB.reset(Cobalt::VertexBuffer::Create(verticesSq, sizeof(verticesSq)));
+		squareVB = Cobalt::VertexBuffer::Create(verticesRec, sizeof(verticesRec));
 
 
 
@@ -114,13 +149,16 @@ public:
 			{Cobalt::ShaderDataType::Float2, "u_texture"}
 		};
 		squareVB->SetLayout(layoutSq);
-
+		m_vertexBuffer->SetLayout(layoutSq);
+		
 		uint32_t indicesSq[6] = { 0, 1, 2, 2, 3, 0};
 
 		Cobalt::Ref<Cobalt::IndexBuffer> squareIB;
-		squareIB.reset(Cobalt::IndexBuffer::Create(indicesSq, sizeof(indicesSq) / sizeof(uint32_t)));
+		squareIB = Cobalt::IndexBuffer::Create(indicesSq, sizeof(indicesSq) / sizeof(uint32_t));
 		m_vertexArraySq->AddVertexBuffer(squareVB);
+		m_vertexArray->AddVertexBuffer(m_vertexBuffer);
 		m_vertexArraySq->SetIndexBuffer(squareIB);
+		m_vertexArray->SetIndexBuffer(squareIB);
 
 		std::string vertSrcFlat = R"(
 			#version 330 core
@@ -151,11 +189,11 @@ public:
 		m_flatColorShader = Cobalt::Shader::Create("FlatColorShader",vertSrcFlat, fragSrcFlat);
 
 		m_flatColorShader->Bind();
-		std::dynamic_pointer_cast<Cobalt::OpenGLShader>(m_flatColorShader)->UploadUniformFloat4("u_color", { .8, 0.1, 0.3, 1.0 });
+		m_flatColorShader->SetFloat4("u_color", { .8, 0.1, 0.3, 1.0 });
 
 		auto textureShader = m_shaderLib.Load("assets/shaders/texture.glsl");
-		std::dynamic_pointer_cast<Cobalt::OpenGLShader>(textureShader)->Bind();
-		std::dynamic_pointer_cast<Cobalt::OpenGLShader>(textureShader)->UploadUniformInt("u_texture", 0);
+		textureShader->Bind();
+		textureShader->SetInt("u_texture", 0);
 
 
 		std::string vertSrcSq = R"(
@@ -211,7 +249,9 @@ private:
 
 	Cobalt::OrthographicCameraController m_cameraController;
 	glm::vec4 clearColor = { 0, .2, .8, 1 };
-	glm::vec3 squarePosition = { 0 ,0, 0 };
+	glm::vec3 alienPosition = { 0 ,0, 0 };
+
+	float alienSpeed = 0.0f;
 
 };
 
@@ -221,7 +261,9 @@ private:
 class Sandbox : public Cobalt::Application {
 public: 
 	Sandbox() {
-		PushLayer(new ExampleLayer());
+		//Use this for an example layer
+		//PushLayer(new ExampleLayer());
+		PushLayer(new FirstGame());
 	}
 	~Sandbox() {
 		

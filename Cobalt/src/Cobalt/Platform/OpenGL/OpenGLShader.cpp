@@ -60,11 +60,36 @@ namespace Cobalt {
 		glUseProgram(0);
 	}
 
+	void OpenGLShader::SetInt(const std::string& name, int i)
+	{
+		UploadUniformInt(name, i);
+	}
+
+	void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& matrix4)
+	{
+		UploadUniformMat4(name, matrix4);
+	}
+
+	void OpenGLShader::SetFloat4(const std::string& name, const glm::vec4& floatVec4)
+	{
+		UploadUniformFloat4(name, floatVec4);
+	}
+
+	void OpenGLShader::SetFloat3(const std::string& name, const glm::vec3& floatVec3)
+	{
+		UploadUniformFloat3(name, floatVec3);
+	}
+
 
 	void OpenGLShader::UploadUniformFloat2(const std::string& name, const glm::vec2& uniform)
 	{
 		GLint location = glGetUniformLocation(m_rendererId, name.c_str());
 		glUniform2f(location, uniform.x, uniform.y);
+	}
+	void OpenGLShader::UploadUniformFloat3(const std::string& name, const glm::vec3& uniform)
+	{
+		GLint location = glGetUniformLocation(m_rendererId, name.c_str());
+		glUniform3f(location, uniform.x, uniform.y, uniform.z);
 	}
 
 	void OpenGLShader::UploadUniformFloat4(const std::string& name, const glm::vec4& uniform)

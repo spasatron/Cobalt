@@ -1,8 +1,8 @@
 #include "cbpc.h"
 #include "OrthographicCameraController.h"
 
-#include "Input.h"
-#include "KeyCodes.h"
+#include "Cobalt/Core/Input.h"
+#include "Cobalt/Core/KeyCodes.h"
 
 namespace Cobalt {
 
@@ -47,7 +47,7 @@ namespace Cobalt {
 
 	bool OrthographicCameraController::OnMouseScrolled(MouseScrolledEvent& e)
 	{
-		m_zoomLevel -= e.GetYOffset()*.25;
+		m_zoomLevel -= e.GetYOffset()*.25f;
 		m_zoomLevel = std::max(m_zoomLevel, .25f);
 		m_camera.SetProjection(-m_aspectRatio * m_zoomLevel, m_aspectRatio * m_zoomLevel, -m_zoomLevel, m_zoomLevel);
 		return false;

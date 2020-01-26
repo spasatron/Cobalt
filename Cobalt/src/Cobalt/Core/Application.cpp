@@ -1,9 +1,9 @@
 #include "cbpc.h"
 #include "Application.h"
 
-#include "Cobalt/Input.h"
+#include "Cobalt/Core/Input.h"
 #include "Cobalt/Renderer/Renderer.h"
-#include "Cobalt/KeyCodes.h"
+#include "Cobalt/Core/KeyCodes.h"
 #include "Cobalt/ImGui/ImGuiLayer.h"
 
 #include <GLFW/glfw3.h>
@@ -42,6 +42,7 @@ namespace Cobalt {
 
 		EventDispatcher eventDispatcher(e);
 		eventDispatcher.Dispatch<WindowCloseEvent>(COBALT_BIND_EVENT_FUNCTION(Application::OnWindowClose));
+		eventDispatcher.Dispatch<WindowResizeEvent>(COBALT_BIND_EVENT_FUNCTION(Application::OnWindowResize));
 		//COBALT_CORE_TRACE("{0}", e);
 
 		for (auto it = m_layerStack.end(); it != m_layerStack.begin();) {
@@ -66,11 +67,11 @@ namespace Cobalt {
 			m_lastFrameTime = time;
 
 
-		
+			if (!m_minimized) {
 
-			for (Layer* layer : m_layerStack)
-				layer->OnUpdate(timeStep);
-
+				for (Layer* layer : m_layerStack)
+					layer->OnUpdate(timeStep);
+			}
 			m_ImGuiLayer->Begin();
 			for (Layer* layer : m_layerStack)
 				layer->OnImGuiRender();
@@ -79,15 +80,22 @@ namespace Cobalt {
 			//COBALT_CORE_INFO("{0}", Input::IsKeyPressed(65));
 			m_window->OnUpdate();
 		}
-
-
-
-
 	}
 
 	bool Application::OnWindowClose(WindowCloseEvent& e) {
 		m_running = false;
 		return true;
+	}
+
+	bool Application::OnWindowResize(WindowResizeEvent& e) {
+		if (e.GetHeight() == 0 || e.GetWidth() == 0) {
+			m_minimized = true;
+		}
+		m_minimized = false;
+
+		Renderer::OnWindowResize(e.GetWidth(), e.GetHeight());
+
+		return false;
 	}
 
 

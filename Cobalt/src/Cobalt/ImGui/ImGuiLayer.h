@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Cobalt/Layer.h"
+#include "Cobalt/Core/Layer.h"
 #include "Cobalt/Events/MouseEvent.h"
 
 namespace Cobalt{
