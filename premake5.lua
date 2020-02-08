@@ -20,6 +20,7 @@ IncludeDir["stb_image"] = "Cobalt/vendor/stb_image"
 include "Cobalt/vendor/GLFW"
 include "Cobalt/vendor/GLAD"
 include "Cobalt/vendor/imgui"
+include "Cobalt/vendor/free-type"
 
 
 project "Cobalt"
@@ -61,7 +62,8 @@ project "Cobalt"
         "GLFW",
         "GLAD",
         "ImGui",
-        "opengl32.lib"
+        "opengl32.lib",
+        "FreeType"
     }
     filter "system:windows"
         
