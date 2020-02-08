@@ -80,6 +80,11 @@ namespace Cobalt {
 		UploadUniformFloat3(name, floatVec3);
 	}
 
+	void OpenGLShader::SetFloat2(const std::string& name, const glm::vec2& floatVec2)
+	{
+		UploadUniformFloat2(name, floatVec2);
+	}
+
 
 	void OpenGLShader::UploadUniformFloat2(const std::string& name, const glm::vec2& uniform)
 	{

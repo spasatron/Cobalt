@@ -25,6 +25,7 @@ namespace Cobalt{
 		virtual void SetMat4(const std::string& name, const glm::mat4& matrix4) override;
 		virtual void SetFloat4(const std::string& name, const glm::vec4& floatVec4) override;
 		virtual void SetFloat3(const std::string& name, const glm::vec3& floatVec3) override;
+		virtual void SetFloat2(const std::string& name, const glm::vec2& floatVec2) override;
 
 		virtual void UploadUniformFloat2(const std::string& name, const glm::vec2& uniform);
 		virtual void UploadUniformFloat3(const std::string& name, const glm::vec3& uniform);

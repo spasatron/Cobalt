@@ -25,10 +25,10 @@ namespace Cobalt {
 		s_data->m_vertexArray = VertexArray::Create();
 
 		float verticesRec[5 * 4] = {
-			-.6f, -0.6f, 0.0f, 0.0f, 0.0f,
-			.6f, -0.6f, 0.0f, 1.0f, 0.0f,
-			.6f, 0.6f, 0.0f, 1.0f, 1.0f,
-			-.6f, 0.6f, 0.0f, 0.0f, 1.0f
+			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
+			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
+			1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+			-1.0f, 1.0f, 0.0f, 0.0f, 1.0f
 		};
 		Ref<VertexBuffer> m_vertexBuffer = VertexBuffer::Create(verticesRec, sizeof(verticesRec));
 

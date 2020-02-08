@@ -5,13 +5,13 @@
 	layout(location = 1) in vec2 a_texture;
 			
 	uniform mat4 u_viewProjection;
-	uniform mat4 u_Transform;
+	uniform mat4 u_transform;
 			
 	out vec2 v_texture;
 
 	void main(){
 		v_texture = a_texture;
-		gl_Position = u_viewProjection*u_Transform*vec4(a_position,1);
+		gl_Position = u_viewProjection*u_transform*vec4(a_position,1);
 
 	}
 

@@ -10,3 +10,6 @@
 [submodule "Cobalt/vendor/glm"]
 	path = Cobalt/vendor/glm
 	url = https://github.com/g-truc/glm
+[submodule "Cobalt/vendor/free-type"]
+	path = Cobalt/vendor/free-type
+	url = https://github.com/spasatron/freetype-windows-binaries
