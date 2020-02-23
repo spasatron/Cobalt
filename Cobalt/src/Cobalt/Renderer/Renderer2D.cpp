@@ -9,14 +9,25 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
+
+//We need to remove all of this below eventually
+
+#include <glad/glad.h>
+
+
+
 namespace Cobalt {
 
 	struct Renderer2DStorage {
 		Ref<VertexArray> m_vertexArray;
 		Ref<Shader> flatColorShader;
 		Ref<Shader> textureShader;
+		Ref<Shader> fontShader;
+		texture_atlas_t* atlas;
+		texture_font_t* font;
 	};
 
+	
 	static Renderer2DStorage* s_data;
 
 	void Renderer2D::Init()
@@ -36,6 +47,7 @@ namespace Cobalt {
 			{ShaderDataType::Float3, "vertices"},
 			{ShaderDataType::Float2, "textureCoords"}
 		};
+
 		m_vertexBuffer->SetLayout(layoutSq);
 		uint32_t indicesSq[6] = { 0, 1, 2, 2, 3, 0 };
 
@@ -45,12 +57,23 @@ namespace Cobalt {
 
 		s_data->flatColorShader = Shader::Create("assets/shaders/flatColor.glsl");
 		s_data->textureShader = Shader::Create("assets/shaders/texture.glsl");
+		s_data->fontShader = Shader::Create("assets/shaders/font.glsl");
 		s_data->textureShader->Bind();
 		s_data->textureShader->SetInt("u_texture", 0);
+
+
+
+
+		//To remove
+		s_data->atlas = texture_atlas_new(512, 512, 1);
+		s_data->font = texture_font_new_from_file(s_data->atlas, 32, "assets/fonts/handy00.ttf");
 	}
+
+
 
 	void Renderer2D::Shutdown()
 	{
+		glDeleteTextures(1, &s_data->atlas->id);
 		delete s_data;
 	}
 
@@ -62,6 +85,9 @@ namespace Cobalt {
 	
 		s_data->textureShader->Bind();
 		s_data->textureShader->SetMat4("u_viewProjection", camera.GetViewProjectionMatrix());
+
+		s_data->fontShader->Bind();
+		s_data->fontShader->SetMat4("projection", camera.GetViewProjectionMatrix());
 	}
 
 	void Renderer2D::EndScene()
@@ -104,5 +130,17 @@ namespace Cobalt {
 	{
 		DrawQuad({ position.x, position.y, 0.0f }, size, texture, rotation);
 	}
+
+	void Renderer2D::RenderText(const std::string& text, const glm::vec2& pos, const glm::vec4& color)
+	{
+		
+		texture_font_get_glyph(s_data->font, text.c_str());
+
+		glGenTextures(1, &s_data->atlas->id);
+		glBindTexture(GL_TEXTURE_2D, s_data->atlas->id);
+
+	}
+
+	
 
 }

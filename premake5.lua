@@ -16,12 +16,13 @@ IncludeDir["GLAD"] = "Cobalt/vendor/GLAD/include"
 IncludeDir["ImGui"] = "Cobalt/vendor/imgui"
 IncludeDir["glm"] = "Cobalt/vendor/glm"
 IncludeDir["stb_image"] = "Cobalt/vendor/stb_image"
+IncludeDir["FreeType"] = "Cobalt/vendor/free-type/include"
+IncludeDir["FreeTypeGL"] = "Cobalt/vendor/free-type-gl"
 
 include "Cobalt/vendor/GLFW"
 include "Cobalt/vendor/GLAD"
 include "Cobalt/vendor/imgui"
 include "Cobalt/vendor/free-type"
-
 
 project "Cobalt"
     location "Cobalt"
@@ -43,7 +44,9 @@ project "Cobalt"
         "%{prj.name}/vendor/stb_image/**.cpp",
         "%{prj.name}/vendor/stb_image/**.h",
         "%{prj.name}/vendor/glm/glm/**.hpp",
-        "%{prj.name}/vendor/glm/glm/**.inl"
+        "%{prj.name}/vendor/glm/glm/**.inl",
+        "%{prj.name}/vendor/free-type-gl/*.h",
+        "%{prj.name}/vendor/free-type-gl/*.c"
     }
     defines{
         "_CRT_SECURE_NO_WARNINGS"
@@ -56,7 +59,9 @@ project "Cobalt"
         "%{IncludeDir.GLAD}",
         "%{IncludeDir.ImGui}",
         "%{IncludeDir.glm}",
-        "%{IncludeDir.stb_image}"
+        "%{IncludeDir.stb_image}",
+        "%{IncludeDir.FreeType}",
+        "%{IncludeDir.FreeTypeGL}"
     }
     links{
         "GLFW",
