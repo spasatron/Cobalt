@@ -12,101 +12,180 @@
 
 //We need to remove all of this below eventually
 
-#include <glad/glad.h>
 
 
 
 namespace Cobalt {
 
-	struct Renderer2DStorage {
-		Ref<VertexArray> m_vertexArray;
+
+	struct QuadVertex {
+		glm::vec3 Position;
+		glm::vec4 Color;
+		glm::vec2 TextureCoord;
+		//TODO TextID;
+	};
+
+	struct Renderer2DData {
+		//Constants For setting the number of draw calls
+
+		const uint32_t MaxQuad = 10000;
+		const uint32_t MaxQuadVertex = 4 * MaxQuad;
+		const uint32_t MaxQuadIndex = 6 * MaxQuad;
+
+		Ref<VertexArray> m_vertexArray; 
+		Ref<VertexBuffer> m_vertexBuffer;
 		Ref<Shader> flatColorShader;
 		Ref<Shader> textureShader;
 		Ref<Shader> fontShader;
-		texture_atlas_t* atlas;
-		texture_font_t* font;
+
+		uint32_t QuadIndexCount = 0;
+		QuadVertex* QuadVertexBufferBase = nullptr;
+		QuadVertex* QuadVertexBufferPtr = nullptr;
 	};
 
-	
-	static Renderer2DStorage* s_data;
+	//Can move this to pointer if needed.
+	static Renderer2DData s_data;
+
+
 
 	void Renderer2D::Init()
 	{
-		s_data = new Renderer2DStorage();
-		s_data->m_vertexArray = VertexArray::Create();
+		s_data.m_vertexArray = VertexArray::Create();
 
-		float verticesRec[5 * 4] = {
-			-1.0f, -1.0f, 0.0f, 0.0f, 0.0f,
-			1.0f, -1.0f, 0.0f, 1.0f, 0.0f,
-			1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
-			-1.0f, 1.0f, 0.0f, 0.0f, 1.0f
-		};
-		Ref<VertexBuffer> m_vertexBuffer = VertexBuffer::Create(verticesRec, sizeof(verticesRec));
+		s_data.m_vertexBuffer = VertexBuffer::Create(s_data.MaxQuadVertex * sizeof(QuadVertex));
 
 		BufferLayout layoutSq = {
-			{ShaderDataType::Float3, "vertices"},
-			{ShaderDataType::Float2, "textureCoords"}
+			{ShaderDataType::Float3, "a_Position"},
+			{ShaderDataType::Float4, "a_Color"},
+			{ShaderDataType::Float2, "a_TextureCoord"}
 		};
 
-		m_vertexBuffer->SetLayout(layoutSq);
-		uint32_t indicesSq[6] = { 0, 1, 2, 2, 3, 0 };
+		s_data.m_vertexBuffer->SetLayout(layoutSq);
 
-		Ref<IndexBuffer> m_indexBuffer = IndexBuffer::Create(indicesSq, sizeof(indicesSq) / sizeof(uint32_t));
-		s_data->m_vertexArray->AddVertexBuffer(m_vertexBuffer);
-		s_data->m_vertexArray->SetIndexBuffer(m_indexBuffer);
+		//Must be careful here. Might be better to refrence count later.
+		//Gen the Quad Indicies
 
-		s_data->flatColorShader = Shader::Create("assets/shaders/flatColor.glsl");
-		s_data->textureShader = Shader::Create("assets/shaders/texture.glsl");
-		s_data->fontShader = Shader::Create("assets/shaders/font.glsl");
-		s_data->textureShader->Bind();
-		s_data->textureShader->SetInt("u_texture", 0);
+		uint32_t* quadIndices = new uint32_t[s_data.MaxQuadIndex];
+		
+		uint32_t pos = 0;
+
+		for (uint32_t i = 0; i < s_data.MaxQuadIndex; i += 6) {
+
+			quadIndices[i + 0] = pos + 0;
+			quadIndices[i + 1] = pos + 1;
+			quadIndices[i + 2] = pos + 2;
+
+			quadIndices[i + 3] = pos + 2;
+			quadIndices[i + 4] = pos + 3;
+			quadIndices[i + 5] = pos + 0;
+
+			pos += 4;
+		}
+
+		Ref<IndexBuffer> m_indexBuffer = IndexBuffer::Create(quadIndices, s_data.MaxQuadIndex);
+
+		
+		
+		s_data.m_vertexArray->AddVertexBuffer(s_data.m_vertexBuffer);
+
+		s_data.QuadVertexBufferBase = new QuadVertex[s_data.MaxQuadVertex];
+
+		s_data.m_vertexArray->SetIndexBuffer(m_indexBuffer);
+			  
+		s_data.flatColorShader = Shader::Create("assets/shaders/flatColor.glsl");
+		s_data.textureShader = Shader::Create("assets/shaders/texture.glsl");
+		s_data.fontShader = Shader::Create("assets/shaders/font.glsl");
+		s_data.textureShader->Bind();
+		s_data.textureShader->SetInt("u_texture", 0);
 
 
+		delete[] quadIndices;
 
-
-		//To remove
-		s_data->atlas = texture_atlas_new(512, 512, 1);
-		s_data->font = texture_font_new_from_file(s_data->atlas, 32, "assets/fonts/handy00.ttf");
+		
 	}
 
 
 
 	void Renderer2D::Shutdown()
 	{
-		glDeleteTextures(1, &s_data->atlas->id);
-		delete s_data;
+
 	}
 
 	void Renderer2D::BeginScene(OrthographicCamera& camera)
 	{
-		//Bind shader with the current camera settings
-		s_data->flatColorShader->Bind();
-		s_data->flatColorShader->SetMat4("u_viewProjection", camera.GetViewProjectionMatrix());
-	
-		s_data->textureShader->Bind();
-		s_data->textureShader->SetMat4("u_viewProjection", camera.GetViewProjectionMatrix());
 
-		s_data->fontShader->Bind();
-		s_data->fontShader->SetMat4("projection", camera.GetViewProjectionMatrix());
+		s_data.QuadVertexBufferPtr = s_data.QuadVertexBufferBase;
+		s_data.QuadIndexCount = 0;
+
+
+		//Bind shader with the current camera settings
+		s_data.flatColorShader->Bind();
+		s_data.flatColorShader->SetMat4("u_viewProjection", camera.GetViewProjectionMatrix());
+	
+		s_data.textureShader->Bind();
+		s_data.textureShader->SetMat4("u_viewProjection", camera.GetViewProjectionMatrix());
+
+		s_data.fontShader->Bind();
+		s_data.fontShader->SetMat4("projection", camera.GetViewProjectionMatrix());
+
+
+		s_data.flatColorShader->Bind();
 	}
 
 	void Renderer2D::EndScene()
 	{
 
+		uint32_t dataSize = (uint8_t*)s_data.QuadVertexBufferPtr - (uint8_t*)s_data.QuadVertexBufferBase;
+		s_data.m_vertexBuffer->SetData(s_data.QuadVertexBufferBase, dataSize);
+
+		Flush();
+	}
+
+	void Renderer2D::Flush()
+	{
+		RenderCommand::DrawIndexed(s_data.m_vertexArray, s_data.QuadIndexCount);
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const glm::vec4& color, float rotation)
 	{
-		s_data->flatColorShader->Bind();
-		s_data->flatColorShader->SetFloat4("u_color", color);
+
+		//Load all of the information into the QuadVertexBufferPtr. This is all displayed at the end of the scene when Flush is called
+		s_data.QuadVertexBufferPtr->Position = position;
+		s_data.QuadVertexBufferPtr->Color = color;
+		s_data.QuadVertexBufferPtr->TextureCoord = {0.0f, 0.0f};
+		s_data.QuadVertexBufferPtr++;
+
+		s_data.QuadVertexBufferPtr->Position = { position.x + size.x, position.y, position.z};
+		s_data.QuadVertexBufferPtr->Color = color;
+		s_data.QuadVertexBufferPtr->TextureCoord = { 1.0f, 0.0f };
+		s_data.QuadVertexBufferPtr++;
+
+		s_data.QuadVertexBufferPtr->Position = { position.x + size.x, position.y + size.y, position.z };
+		s_data.QuadVertexBufferPtr->Color = color;
+		s_data.QuadVertexBufferPtr->TextureCoord = { 1.0f, 1.0f };
+		s_data.QuadVertexBufferPtr++;
+
+		s_data.QuadVertexBufferPtr->Position = { position.x, position.y + size.y, position.z };
+		s_data.QuadVertexBufferPtr->Color = color;
+		s_data.QuadVertexBufferPtr->TextureCoord = { 0.0f, 1.0f };
+		s_data.QuadVertexBufferPtr++;
+
+		s_data.QuadIndexCount += 6;
+
+
+		/*
+		s_data.flatColorShader->Bind();
+		s_data.flatColorShader->SetFloat4("u_color", color);
 		//Calculate transform matrix
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0, 0, 1)) *
 			glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-		s_data->flatColorShader->SetMat4("u_transform", transform);
-		s_data->m_vertexArray->Bind();
-		RenderCommand::DrawIndexed(s_data->m_vertexArray);
+		s_data.flatColorShader->SetMat4("u_transform", transform);
+		s_data.m_vertexArray->Bind();
+		RenderCommand::DrawIndexed(s_data.m_vertexArray);
+		*/	
 	}
+
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const glm::vec4& color, float rotation)
 	{
@@ -115,15 +194,15 @@ namespace Cobalt {
 
 	void Renderer2D::DrawQuad(const glm::vec3& position, const glm::vec2& size, const Ref<Texture>& texture, float rotation)
 	{
-		s_data->textureShader->Bind();
+		s_data.textureShader->Bind();
 		//Calculate transform matrix
 		glm::mat4 transform = glm::translate(glm::mat4(1.0f), position) *
 			glm::rotate(glm::mat4(1.0f), glm::radians(rotation), glm::vec3(0, 0, 1)) *
 			glm::scale(glm::mat4(1.0f), { size.x, size.y, 1.0f });
-		s_data->flatColorShader->SetMat4("u_transform", transform);
-		s_data->m_vertexArray->Bind();
+		s_data.flatColorShader->SetMat4("u_transform", transform);
+		s_data.m_vertexArray->Bind();
 		texture->Bind();
-		RenderCommand::DrawIndexed(s_data->m_vertexArray);
+		RenderCommand::DrawIndexed(s_data.m_vertexArray);
 	}
 
 	void Renderer2D::DrawQuad(const glm::vec2& position, const glm::vec2& size, const Ref<Texture>& texture, float rotation)
@@ -131,15 +210,6 @@ namespace Cobalt {
 		DrawQuad({ position.x, position.y, 0.0f }, size, texture, rotation);
 	}
 
-	void Renderer2D::RenderText(const std::string& text, const glm::vec2& pos, const glm::vec4& color)
-	{
-		
-		texture_font_get_glyph(s_data->font, text.c_str());
-
-		glGenTextures(1, &s_data->atlas->id);
-		glBindTexture(GL_TEXTURE_2D, s_data->atlas->id);
-
-	}
 
 	
 

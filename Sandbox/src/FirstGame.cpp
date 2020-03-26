@@ -159,7 +159,7 @@ void FirstGame::OnUpdate(Cobalt::TimeStep ts)
 
 	
 	//Draw ground
-	Cobalt::Renderer2D::DrawQuad({ 1.2f, -.1f }, { .6f*.05f, .6f*.05f }, { .68f, .7f, .1f, 1.0f }, winRot);
+	//Cobalt::Renderer2D::DrawQuad({ 1.2f, -.1f }, { .6f*.05f, .6f*.05f }, { .68f, .7f, .1f, 1.0f }, winRot);
 	Cobalt::Renderer2D::DrawQuad({ 0.0f, -.8f, .1f }, { .6f*3.0f, .6f*.3f }, { 0.2f, 0.3f, .8f , 1.0f});
 	m_rect->Draw();
 	m_player.Draw();

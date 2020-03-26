@@ -9,6 +9,22 @@
 namespace Cobalt {
 
 
+
+
+	Ref<VertexBuffer> VertexBuffer::Create(uint32_t size)
+	{
+		
+		switch (Renderer::GetRendererAPI()) {
+		case RendererAPI::API::OpenGL:
+			return std::make_shared<OpenGLVertexBuffer>(size);
+		case RendererAPI::API::None:
+			COBALT_INFO("None Render API SELECTED");
+			return nullptr;
+		}
+		COBALT_CORE_ERROR("COULD NOT FIND RENDERER API");
+		return nullptr;
+
+	}
 	Ref<VertexBuffer> VertexBuffer::Create(float* vertices, uint32_t size) {
 
 		switch (Renderer::GetRendererAPI()) {

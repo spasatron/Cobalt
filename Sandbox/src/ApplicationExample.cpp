@@ -17,8 +17,7 @@ class MyLayer : public Cobalt::Layer {
 		Cobalt::RenderCommand::Clear();
 
 		Cobalt::Renderer2D::BeginScene(m_cameraController.GetCamera());
-		Cobalt::Renderer2D::RenderText("Hello World", { 0, 0 }, { .8f, .3f, .2f, 1.0f });
-
+		Cobalt::Renderer2D::DrawQuad({ 0.0f, 0.0f }, { 1.0f, 1.0f }, { .8, .2, .3, 1.0 });
 		Cobalt::Renderer2D::EndScene();
 
 
@@ -39,7 +38,8 @@ public:
 		//Use this for an example layer
 		//PushLayer(new ExampleLayer());
 		//PushLayer(new MandelbrotLayer());
-		PushLayer(new MyLayer());
+		PushLayer(new FirstGame());
+		//PushLayer(new MyLayer());
 	}
 	~Sandbox() {
 		
